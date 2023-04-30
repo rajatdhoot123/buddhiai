@@ -3,11 +3,11 @@ import Navbar from "@/components/Navbar";
 
 const Layout = ({ children }) => {
   return (
-    <div className="absolute">
-      <div className="fixed w-full top-0 bg-blue-200 p-5">
+    <div className="absolute bg-[#1F222C] w-full">
+      <div className="fixed w-full top-0 p-5 bg-[#1F222C]">
         <Navbar />
       </div>
-      <div className="pt-24">{children}</div>
+      <div className="pt-24 w-full">{children}</div>
       <Footer />
     </div>
   );

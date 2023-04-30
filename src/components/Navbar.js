@@ -28,7 +28,7 @@ const Logo = () => (
         src="/kwiktwik-logo.png"
       />
     </div>
-    <span className="font-bold text-xl text-[#000000]">BuddhiAi</span>
+    <span className="font-semibold text-xl text-white">Buddhi-Ai</span>
   </Link>
 );
 
@@ -52,7 +52,7 @@ const NavList = ({ setIsOpen }) => {
         <a
           key={label}
           href={link}
-          className="text-[#090F4E] text-lg hover:scale-125 hover:font-bold transition duration-150 ease-in"
+          className="text-white font-semibold hover:scale-125 hover:font-bold transition duration-150 ease-in"
         >
           {label}
         </a>
