@@ -21,7 +21,10 @@ const ContactForm = () => {
 
     try {
       setLoading(true);
-      const { data: apiData } = await axios.post("/api/send-mail", data);
+      const { data: apiData } = await axios.post("/api/send-mail", {
+        ...data,
+        subject: `${data.subject} - Buddhi Ai`,
+      });
       if (apiData.status === "success") {
         event.target.reset();
         if (typeof alert !== "undefined") {
