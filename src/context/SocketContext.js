@@ -23,19 +23,11 @@ const SocketProvider = ({ children = null }) => {
       });
       setSocket(socket);
       socket.on("connect", (message) => {
-        socket.emit("join", userId);
         console.log("Connected to server");
       });
 
-      socket.on("*", (message) => {
-        console.log("Connected to server" + message);
-      });
       socket.on("message", async (message) => {
         console.log(message.clientId, "message");
-      });
-
-      socket.on("joined_room", (message) => {
-        console.log(message);
       });
 
       socket.on("disconnect", () => {
