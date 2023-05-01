@@ -78,7 +78,7 @@ function App({ Component, pageProps }) {
           property="og:description"
           content="Use our advanced natural language processing technology to quickly convert any text into engaging chatbots for your messaging platform or website."
         />
-        <meta property="og:image" content="[insert image URL here]" />
+        <meta property="og:image" content="/og_image.webp" />
         <meta property="og:url" content="https://buddhiai.app" />
         <meta
           name="twitter:title"
@@ -88,8 +88,8 @@ function App({ Component, pageProps }) {
           name="twitter:description"
           content="Use our advanced natural language processing technology to quickly convert any text into engaging chatbots for your messaging platform or website."
         />
-        <meta name="twitter:image" content="[insert image URL here]" />
-        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content="/og_image.webp" />
+        <meta name="twitter:card" content="/og_image.webp" />
       </Head>
       <SessionContextProvider
         supabaseClient={supabaseClient}
