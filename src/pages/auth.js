@@ -3,6 +3,7 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useUser, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Layout from "@/layout/public";
 
 const LoginPage = () => {
   const supabaseClient = useSupabaseClient();
@@ -18,8 +19,8 @@ const LoginPage = () => {
 
   if (!user)
     return (
-      <div className="min-h-screen flex justify-center items-center">
-        <div className="bg-white w-full md:w-1/2 p-5 rounded-md">
+      <Layout>
+        <div className="bg-white w-full md:w-1/2 p-5 rounded-md my-24 m-auto">
           <Auth
             redirectTo="http://localhost:3000/"
             appearance={{ theme: ThemeSupa }}
@@ -28,7 +29,7 @@ const LoginPage = () => {
             socialLayout="horizontal"
           />
         </div>
-      </div>
+      </Layout>
     );
 
   return null;

@@ -6,7 +6,7 @@ const Landing = () => (
   <Layout>
     <div className="min-h-[80vh] bg-[#1F222C] flex justify-center items-center">
       <div>
-        <div className="text-4xl font-semibold text-center text-white">
+        <div className="text-5xl font-semibold text-center text-white">
           Transform Your Data <br />
           into Chatbots - Instantly
         </div>

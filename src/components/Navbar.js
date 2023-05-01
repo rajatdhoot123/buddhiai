@@ -23,8 +23,7 @@ const Logo = ({ className = "" }) => (
   </Link>
 );
 
-const NavList = ({ setIsOpen, className }) => {
-  const router = useRouter();
+const NavList = ({ setIsOpen }) => {
   return (
     <div
       onClick={() => setIsOpen(false)}
@@ -46,6 +45,7 @@ const NavList = ({ setIsOpen, className }) => {
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const router = useRouter();
   return (
     <>
       <nav className="container flex md:hidden mx-auto items-center justify-between p-5">
@@ -75,7 +75,9 @@ const Navbar = () => {
       </nav>
       <nav className="hidden md:flex items-center text-white justify-around">
         <Logo className="text-white" />
-        <NavList className="text-white" setIsOpen={setIsOpen} />
+        {router.pathname !== "/auth" && (
+          <NavList className="text-white" setIsOpen={setIsOpen} />
+        )}
         <BookDemo />
       </nav>
       <div
