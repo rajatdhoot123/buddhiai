@@ -15,6 +15,7 @@ const SocketProvider = ({ children = null }) => {
     let socket;
     if (token && userId) {
       socket = io("https://buddhi.kwiktwik.com", {
+        path: "/ws/socket.io",
         withCredentials: true,
         auth: {
           authorization: `Bearer ${token}`,
