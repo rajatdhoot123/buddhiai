@@ -13,10 +13,10 @@ const AboutUs = () => (
       internal operations, and enhance productivity. With our easy-to-use
       platform, anyone can create a chatbot that can handle a wide range of
       tasks, from customer support and lead generation to data analysis and
-      reporting. As a product of KwikTwik.co, Buddhi AI benefits from our team's
-      extensive experience in AI and machine learning. We're dedicated to
-      creating innovative AI solutions that help businesses succeed, and we're
-      passionate about bringing the power of AI to everyone. Whether you're a
+      reporting. As a product of KwikTwik.co, Buddhi AI benefits from our team&apos;s
+      extensive experience in AI and machine learning. We&apos;re dedicated to
+      creating innovative AI solutions that help businesses succeed, and we&apos;re
+      passionate about bringing the power of AI to everyone. Whether you&apos;re a
       marketer, a developer, or a small business owner, Buddhi AI is the perfect
       solution for anyone looking to leverage the power of chatbots. With our
       intuitive platform and advanced technology, you can create chatbots that
