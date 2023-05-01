@@ -29,16 +29,7 @@ const NavList = ({ setIsOpen }) => {
       onClick={() => setIsOpen(false)}
       className="md:space-x-8 space-y-8 md:space-y-0 flex-col md:flex-row flex md:ml-48"
     >
-      {NAV_LIST.filter((nav) =>
-        [
-          "/privacy-policy",
-          "/terms-and-condition",
-          "/cancellations-refund",
-          "/contact-us",
-        ].includes(router.pathname)
-          ? false
-          : nav.link.startsWith("#")
-      ).map(({ label, link }) => (
+      {NAV_LIST.map(({ label, link }) => (
         <a
           key={label}
           href={link}
