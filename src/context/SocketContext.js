@@ -14,7 +14,7 @@ const SocketProvider = ({ children = null }) => {
   useEffect(() => {
     let socket;
     if (token && userId) {
-      socket = io("https://buddhi.kwiktwik.com", {
+      socket = io("ws://buddhi.kwiktwik.com", {
         path: "/ws/socket.io",
         withCredentials: true,
         auth: {
