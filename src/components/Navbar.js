@@ -30,13 +30,13 @@ const NavList = ({ setIsOpen }) => {
       className="md:space-x-8 space-y-8 md:space-y-0 flex-col md:flex-row flex md:ml-48"
     >
       {NAV_LIST.map(({ label, link }) => (
-        <a
+        <Link
           key={label}
           href={link}
           className="text-white font-semibold hover:scale-125 hover:font-bold transition duration-150 ease-in"
         >
           {label}
-        </a>
+        </Link>
       ))}
     </div>
   );

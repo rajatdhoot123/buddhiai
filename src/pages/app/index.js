@@ -13,8 +13,8 @@ const App = () => {
     event.preventDefault();
   };
   return (
-    <div class="grid grid-cols-12 chat-bg h-screen">
-      <div class="col-span-2 p-5 h-full bg-[#202123]">
+    <div className="grid grid-cols-12 chat-bg h-screen">
+      <div className="col-span-2 p-5 h-full bg-[#202123]">
         <div className="flex flex-col justify-between h-full">
           <ul>
             {LEFT_ICONS.map(({ label }) => (
@@ -32,7 +32,7 @@ const App = () => {
           </button>
         </div>
       </div>
-      <div class="col-span-10 overflow-y-scroll">
+      <div className="col-span-10 overflow-y-scroll">
         <div className="flex flex-col justify-between h-full gap-5">
           <div className="flex-1 h-full overflow-y-scroll">
             <ChatMessage
