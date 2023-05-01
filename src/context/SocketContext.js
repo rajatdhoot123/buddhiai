@@ -18,7 +18,7 @@ const SocketProvider = ({ children = null }) => {
         path: "/ws/socket.io/",
         withCredentials: true,
         auth: {
-          authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       setSocket(socket);
