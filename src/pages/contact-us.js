@@ -44,7 +44,7 @@ const ContactForm = () => {
 
   return (
     <Layout>
-      <div className="md:w-1/2 flex m-auto py-12">
+      <div className="md:w-1/2 flex m-auto py-12 px-5">
         <div>
           <div className="text-center">
             <h2 className="mb-4 text-4xl font-semibold text-white">
