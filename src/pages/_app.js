@@ -2,16 +2,43 @@ import "@/styles/globals.css";
 import { Inter } from "next/font/google";
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { WHATSAPP_SUPPORT_NUMBER } from "@/constant";
 import Head from "next/head";
+import axios from "axios";
+import { SocketProvider } from "@/context/SocketContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
 function App({ Component, pageProps }) {
   // Create a new supabase browser client on every first render.
   const [supabaseClient] = useState(() => createBrowserSupabaseClient());
+
+  useEffect(() => {
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        axios.interceptors.request.use((config) => {
+          config.headers["Authorization"] = `Bearer ${session.access_token}`;
+          return config;
+        });
+        axios.interceptors.response.use(
+          (response) => response,
+          (error) => {
+            const status = error.response ? error.response.status : null;
+
+            if (status === 401) {
+              // will loop if refreshToken returns 401
+              if (typeof window !== "undefined") {
+                window?.location?.reload();
+              }
+            }
+            return Promise.reject(error);
+          }
+        );
+      }
+    });
+  }, [supabaseClient.auth]);
 
   return (
     <>
@@ -60,21 +87,23 @@ function App({ Component, pageProps }) {
         supabaseClient={supabaseClient}
         initialSession={pageProps.initialSession}
       >
-        <main className={inter.className}>
-          <Component {...pageProps} />
-        </main>
-        <a
-          target="_blank"
-          href={`https://api.whatsapp.com/send?phone=${WHATSAPP_SUPPORT_NUMBER}&text=hello`}
-          className="h-12 w-12 fixed bottom-6 right-6 z-50"
-        >
-          <Image
-            className="bg-white rounded-full"
-            fill
-            alt="Buddhi AI"
-            src="/whatsapp.png"
-          />
-        </a>
+        <SocketProvider>
+          <main className={inter.className}>
+            <Component {...pageProps} />
+          </main>
+          <a
+            target="_blank"
+            href={`https://api.whatsapp.com/send?phone=${WHATSAPP_SUPPORT_NUMBER}&text=hello`}
+            className="h-12 w-12 fixed bottom-6 right-6 z-50"
+          >
+            <Image
+              className="bg-white rounded-full"
+              fill
+              alt="Buddhi AI"
+              src="/whatsapp.png"
+            />
+          </a>
+        </SocketProvider>
       </SessionContextProvider>
     </>
   );
