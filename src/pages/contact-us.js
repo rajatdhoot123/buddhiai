@@ -25,13 +25,13 @@ const ContactForm = () => {
       if (apiData.status === "success") {
         event.target.reset();
         if (typeof alert !== "undefined") {
-          alert.info("Thanks for reaching us will be back shortly");
+          alert("Thanks for reaching us will be back shortly");
         }
       }
     } catch (err) {
       if (err) {
         if (typeof alert !== "undefined") {
-          alert.info(err.message);
+          alert(err.message);
         }
       }
     } finally {
@@ -64,7 +64,7 @@ const ContactForm = () => {
               <input
                 type="email"
                 name="mail_id"
-                className="shadow-sm bg-gray-50 border border-gray-300 text-white text-opacity-60 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
+                className="shadow-sm bg-gray-50 border border-gray-300 text-black text-opacity-60 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
                 placeholder="Enter Your Name"
                 required
               />
@@ -79,7 +79,7 @@ const ContactForm = () => {
               <input
                 type="text"
                 name="subject"
-                className="block p-3 w-full text-sm text-white text-opacity-60 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500"
+                className="block p-3 w-full text-sm text-black text-opacity-60 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500"
                 placeholder="Let us know how we can help you"
                 required
               />
@@ -94,7 +94,7 @@ const ContactForm = () => {
               <input
                 type="text"
                 name="phone_number"
-                className="block p-3 w-full text-sm text-white text-opacity-60 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500"
+                className="block p-3 w-full text-sm text-black text-opacity-60 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500"
                 placeholder="Enter your phone number"
                 required
               />
@@ -109,7 +109,7 @@ const ContactForm = () => {
               <textarea
                 name="message"
                 rows="6"
-                className="block p-2.5 w-full text-sm text-white text-opacity-60 bg-gray-50 rounded-lg shadow-sm border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
+                className="block p-2.5 w-full text-sm text-black text-opacity-60 bg-gray-50 rounded-lg shadow-sm border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                 placeholder="Leave a message..."
               ></textarea>
             </div>
@@ -117,7 +117,7 @@ const ContactForm = () => {
               <button
                 disabled={loading}
                 type="submit"
-                className="bg-[#E9EDFF] text-[#738CFD] w-full p-2 rounded-lg"
+                className="text-white bg-[#293FCC] w-full p-2 rounded-lg"
               >
                 {loading && (
                   <svg
