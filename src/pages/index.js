@@ -19,9 +19,9 @@ const Landing = () => (
         </div>
       </div>
     </div>
-    <div className="min-h-[80vh] flex justify-center items-center relative">
-      <div className="h-[400px] w-full absolute -top-36">
-        <Image className="object-contain" src="/hero.png" fill />
+    <div className="md:min-h-[620px] h-[280px] flex justify-center items-center relative">
+      <div className="h-[250px] md:h-[600px] w-full absolute md:-top-36 -top-12">
+        <Image alt="Buddhi AI" className="object-contain" src="/hero.png" fill />
       </div>
     </div>
     <section className="bg-[#0D0C16] ">
