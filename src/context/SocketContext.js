@@ -22,11 +22,14 @@ const SocketProvider = ({ children = null }) => {
         },
       });
       setSocket(socket);
-      socket.on("connect", () => {
+      socket.on("connect", (message) => {
         socket.emit("join", userId);
         console.log("Connected to server");
       });
 
+      socket.on("*", (message) => {
+        console.log("Connected to server" + message);
+      });
       socket.on("message", async (message) => {
         console.log(message.clientId, "message");
       });
