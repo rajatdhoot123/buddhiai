@@ -14,7 +14,8 @@ const SocketProvider = ({ children = null }) => {
   useEffect(() => {
     let socket;
     if (token && userId) {
-      socket = io("https://buddhi.kwiktwik.com/socket", {
+      socket = io("https://buddhi.kwiktwik.com", {
+        path:"/socket",
         withCredentials: true,
         auth: {
           authorization: `Bearer ${token}`,
