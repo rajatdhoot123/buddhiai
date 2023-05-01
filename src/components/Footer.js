@@ -1,4 +1,5 @@
 import { NAV_LIST, WHATSAPP_SUPPORT_NUMBER } from "@/constant";
+import Image from "next/image";
 import Link from "next/link";
 
 const Footer = () => {
@@ -8,15 +9,16 @@ const Footer = () => {
         <div className=" flex flex-wrap">
           <div className="w-full px-4 sm:w-2/3 lg:w-3/12">
             <div className="mb-10 w-full">
-              <a
-                href="javascript:void(0)"
-                className="mb-6 inline-block max-w-[160px]"
-              >
-                <img
-                  src="https://cdn.tailgrids.com/2.0/image/assets/images/logo/logo.svg"
-                  alt="logo"
-                  className="max-w-full"
-                />
+              <a className="mb-6 flex items-center">
+                <div className="relative w-12 h-12">
+                  <Image
+                    fill
+                    src="/logo.png"
+                    alt="logo"
+                    className="max-w-full"
+                  />
+                </div>
+                <span className="text-white font-bold text-3xl ml-2">Buddhi AI</span>
               </a>
               <p className="text-white text-opacity-80 mb-7 text-base">
                 Your Intelligent Companion for the Digital World

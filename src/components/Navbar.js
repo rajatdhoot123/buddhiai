@@ -5,24 +5,25 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import BookDemo from "./BookDemo";
 
-const Logo = () => (
+const Logo = ({ className = "" }) => (
   <Link
     href="/"
     className="flex items-center hover:scale-125 transition duration-150 ease-in"
   >
     <div className="flex-shrink-0">
       <Image
-        className="h-8 w-8 md:h-12 md:w-12"
+        alt="Buddhi AI"
+        className="h-12 w-12"
         height="28"
         width="28"
-        src="/kwiktwik-logo.png"
+        src="/logo.png"
       />
     </div>
-    <span className="font-semibold text-xl text-white">Buddhi-Ai</span>
+    <span className={`font-semibold text-xl ml-2 ${className}`}>Buddhi AI</span>
   </Link>
 );
 
-const NavList = ({ setIsOpen }) => {
+const NavList = ({ setIsOpen, className }) => {
   const router = useRouter();
   return (
     <div
@@ -33,7 +34,7 @@ const NavList = ({ setIsOpen }) => {
         <Link
           key={label}
           href={link}
-          className="text-white font-semibold hover:scale-125 hover:font-bold transition duration-150 ease-in"
+          className={`font-semibold hover:scale-125 hover:font-bold transition duration-150 ease-in`}
         >
           {label}
         </Link>
@@ -51,7 +52,7 @@ const Navbar = () => {
         <div className="flex items-center">
           <button
             onClick={() => setIsOpen((prev) => !prev)}
-            className="flex lg:hidden mr-5"
+            className="flex lg:hidden mr-5 text-white"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -68,13 +69,13 @@ const Navbar = () => {
               />
             </svg>
           </button>
-          <Logo />
+          <Logo className="text-white" />
         </div>
         <BookDemo />
       </nav>
       <nav className="hidden md:flex items-center text-white justify-around">
-        <Logo />
-        <NavList setIsOpen={setIsOpen} />
+        <Logo className="text-white" />
+        <NavList className="text-white" setIsOpen={setIsOpen} />
         <BookDemo />
       </nav>
       <div
@@ -84,7 +85,7 @@ const Navbar = () => {
       >
         <div>
           <div className="w-full justify-between flex items-center p-5">
-            <Logo />
+            <Logo className="text-black" />
             <button onClick={() => setIsOpen((prev) => !prev)}>
               <strong className="text-[28px] align-center cursor-pointer alert-del">
                 &times;
@@ -92,7 +93,7 @@ const Navbar = () => {
             </button>
           </div>
           <div className="p-5">
-            <NavList setIsOpen={setIsOpen} />
+            <NavList className="text-black" setIsOpen={setIsOpen} />
           </div>
         </div>
       </div>
