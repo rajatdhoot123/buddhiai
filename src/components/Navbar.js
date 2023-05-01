@@ -3,17 +3,7 @@ import Image from "next/image";
 import { NAV_LIST } from "../constant";
 import Link from "next/link";
 import { useRouter } from "next/router";
-
-const BookDemo = () => {
-  return (
-    <button
-      data-cal-link="kwiktwik/30min"
-      className="px-5 py-2 rounded-md bg-[#293FCC]"
-    >
-      Book Demo
-    </button>
-  );
-};
+import BookDemo from "./BookDemo";
 
 const Logo = () => (
   <Link
