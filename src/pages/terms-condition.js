@@ -70,23 +70,28 @@ const DATA = [
 
   {
     title: "Contact Us",
-    description:
-      `If you have any questions or concerns about these Terms and Conditions or the Chat Bot, please contact us at ${SUPPORT_MAIL}`,
+    description: `If you have any questions or concerns about these Terms and Conditions or the Chat Bot, please contact us at ${SUPPORT_MAIL}`,
   },
 ];
 
 const TermsCondition = () => {
   return (
     <Layout>
-      <h1 className="text-center text-3xl">Terms and Conditions</h1>
-      <ul className="space-y-5 md:px-44 p-5">
-        {DATA.map(({ title, description }) => (
-          <li key={title}>
-            <div className="font-bold">{title}</div>
-            <div>{description}</div>
-          </li>
-        ))}
-      </ul>
+      <div className="my-12">
+        <h1 className="text-center text-3xl text-white">
+          Terms and Conditions
+        </h1>
+        <ul className="space-y-5 md:px-44 p-5">
+          {DATA.map(({ title, description }) => (
+            <li key={title}>
+              <div className="font-bold text-white text-opacity-80">
+                {title}
+              </div>
+              <div className="text-white text-opacity-60">{description}</div>
+            </li>
+          ))}
+        </ul>
+      </div>
     </Layout>
   );
 };
