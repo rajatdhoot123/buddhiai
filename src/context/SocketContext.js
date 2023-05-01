@@ -17,7 +17,6 @@ const SocketProvider = ({ children = null }) => {
       socket = io("https://buddhi.kwiktwik.com", {
         path: "/ws/socket.io/",
         withCredentials: true,
-        transports: ["websocket"],
         auth: {
           authorization: `Bearer ${token}`,
         },
