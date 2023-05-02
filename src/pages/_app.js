@@ -7,6 +7,8 @@ import Image from "next/image";
 import { WHATSAPP_SUPPORT_NUMBER } from "../constant";
 import Head from "next/head";
 import axios from "axios";
+import { useRouter } from "next/router";
+import AppLayout from "../layout/app";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,6 +16,7 @@ function App({ Component, pageProps }) {
   // Create a new supabase browser client on every first render.
   const [supabaseClient] = useState(() => createBrowserSupabaseClient());
 
+  const router = useRouter();
   useEffect(() => {
     supabaseClient.auth.onAuthStateChange((event, session) => {
       if (session) {
@@ -86,9 +89,14 @@ function App({ Component, pageProps }) {
         supabaseClient={supabaseClient}
         initialSession={pageProps.initialSession}
       >
-        {/* <SocketProvider> */}
         <main className={inter.className}>
-          <Component {...pageProps} />
+          {router.pathname.startsWith("/app") ? (
+            <AppLayout>
+              <Component {...pageProps} />
+            </AppLayout>
+          ) : (
+            <Component {...pageProps} />
+          )}
         </main>
         <a
           target="_blank"
@@ -102,7 +110,6 @@ function App({ Component, pageProps }) {
             src="/whatsapp.png"
           />
         </a>
-        {/* </SocketProvider> */}
       </SessionContextProvider>
     </>
   );
