@@ -1,8 +1,9 @@
+import { askQuestion } from "../../axios";
 import ChatMessage from "@/components/ChatMessage";
-import { useSocket } from "@/context/SocketContext";
+// import { useSocket } from "@/context/SocketContext";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FaRobot, FaPaperPlane } from "react-icons/fa";
 import { v4 as uuidv4 } from "uuid";
 
@@ -12,25 +13,28 @@ const App = () => {
   const [state, setState] = useState([]);
   const supabaseClient = useSupabaseClient();
   const router = useRouter();
-  const socket = useSocket();
+  // const socket = useSocket();
 
-  useEffect(() => {
-    if (socket) {
-      socket.on("answer", (answer) => {});
-    }
-  }, [socket]);
-
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     const formData = new FormData(event.currentTarget);
-    let data = {};
+    let payload = {};
     for (let [key, value] of formData.entries()) {
-      data[key] = value;
-      data.id = uuidv4();
-      data.type = "question";
+      payload[key] = value;
+      payload.id = uuidv4();
+      payload.type = "question";
     }
-    socket.emit("question", data);
-    setState((prev) => [...prev, data]);
+    setState((prev) => [...prev, payload]);
+    event.target.reset();
     event.preventDefault();
+    try {
+      const { data } = await askQuestion({ question: payload.text });
+      setState((prev) => [
+        ...prev,
+        { id: uuidv4(), type: "answer", text: data.text },
+      ]);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

@@ -3,7 +3,7 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useUser, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import Layout from "@/layout/public";
+import Layout from "../layout/public";
 
 const LoginPage = () => {
   const supabaseClient = useSupabaseClient();

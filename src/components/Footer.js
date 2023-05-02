@@ -1,4 +1,4 @@
-import { NAV_LIST, WHATSAPP_SUPPORT_NUMBER } from "@/constant";
+import { NAV_LIST, WHATSAPP_SUPPORT_NUMBER } from "../constant";
 import Image from "next/image";
 import Link from "next/link";
 

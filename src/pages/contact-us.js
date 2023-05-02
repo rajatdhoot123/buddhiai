@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import Layout from "@/layout/public";
+import Layout from "../layout/public";
 
 const Paragraph = ({ children, className = "" }) => (
   <p className={`text-[#63657E] font-lg leading-7 my-10 ${className}`}>

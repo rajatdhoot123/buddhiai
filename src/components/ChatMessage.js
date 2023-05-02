@@ -8,12 +8,12 @@ const ChatMessage = ({ message, isCurrentUser }) => {
 
   return (
     <div className={`flex items-center px-44 py-5 ${messageClasses}`}>
-      <div>
+      <div className="relative h-8 w-8 flex-shrink-0">
         <Image
+          className="object-contain"
+          fill
           alt="Chat GPT"
-          height="24"
-          width="24"
-          src={isCurrentUser ? "/user_icon.png" : "/chat_gpt.png"}
+          src={isCurrentUser ? "/user_icon.png" : "/logo.png"}
         />
       </div>
       <div className="ml-5">{message.text}</div>

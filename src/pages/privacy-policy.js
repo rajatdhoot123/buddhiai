@@ -1,5 +1,5 @@
-import { SUPPORT_MAIL } from "@/constant";
-import Layout from "@/layout/public";
+import { SUPPORT_MAIL } from "../constant";
+import Layout from "../layout/public";
 
 const DATA = [
   {

@@ -1,5 +1,5 @@
-import BookDemo from "@/components/BookDemo";
-import Layout from "@/layout/public";
+import BookDemo from "../components/BookDemo";
+import Layout from "../layout/public";
 import Image from "next/image";
 
 const Landing = () => (
