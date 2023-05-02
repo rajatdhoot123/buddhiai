@@ -24,10 +24,22 @@ const App = () => {
       payload.type = "question";
     }
     setState((prev) => [...prev, payload]);
+
+    setTimeout(() => {
+      setState((prev) => [
+        ...prev,
+        {
+          type: "question",
+          id: uuidv4(),
+          text: "Hang tight, we're brainstorming to find the perfect solution to your question!",
+        },
+      ]);
+    }, 500);
     event.target.reset();
     event.preventDefault();
     try {
       const { data } = await askQuestion({ question: payload.text });
+      setState((prev) => prev.filter((_, index) => index !== prev.length - 1));
       setState((prev) => [
         ...prev,
         { id: uuidv4(), type: "answer", text: data.text },
