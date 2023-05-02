@@ -4,6 +4,20 @@ import { NAV_LIST } from "../constant";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import BookDemo from "./BookDemo";
+import { useUser } from "@supabase/auth-helpers-react";
+
+const SignUpDashboard = () => {
+  const user = useUser();
+  return user?.id ? (
+    <Link href="/app" className="px-5 py-2 rounded-md bg-[#293FCC] text-white">
+      Dashboard
+    </Link>
+  ) : (
+    <Link href="/auth" className="px-5 py-2 rounded-md bg-[#293FCC] text-white">
+      Login/Signup
+    </Link>
+  );
+};
 
 const Logo = ({ className = "" }) => (
   <Link
@@ -44,8 +58,9 @@ const NavList = ({ setIsOpen }) => {
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-
+  const user = useUser();
   const router = useRouter();
+
   return (
     <>
       <nav className="container flex md:hidden mx-auto items-center justify-between p-5">
@@ -71,14 +86,14 @@ const Navbar = () => {
           </button>
           <Logo className="text-white" />
         </div>
-        <BookDemo />
+        <SignUpDashboard />
       </nav>
       <nav className="hidden md:flex items-center text-white justify-around">
         <Logo className="text-white" />
         {router.pathname !== "/auth" && (
           <NavList className="text-white" setIsOpen={setIsOpen} />
         )}
-        <BookDemo />
+        <SignUpDashboard />
       </nav>
       <div
         className={`z-20 md:hidden fixed inset-0 bg-white h-screen w-full md:w-96 transform transition-all ease-in-out duration-500 ${
