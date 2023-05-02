@@ -1,4 +1,5 @@
-import Layout from "@/layout/public";
+import Layout from "../layout/public";
+
 
 const AboutUs = () => (
   <Layout>

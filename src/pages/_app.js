@@ -1,14 +1,12 @@
-import "@/styles/globals.css";
+import "../styles/globals.css";
 import { Inter } from "next/font/google";
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { WHATSAPP_SUPPORT_NUMBER } from "@/constant";
+import { WHATSAPP_SUPPORT_NUMBER } from "../constant";
 import Head from "next/head";
 import axios from "axios";
-// import { SocketProvider } from "@/context/SocketContext";
-import { startApi } from "./api";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,13 +16,6 @@ function App({ Component, pageProps }) {
 
   useEffect(() => {
     supabaseClient.auth.onAuthStateChange((event, session) => {
-      startApi()
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
       if (session) {
         axios.interceptors.request.use((config) => {
           config.headers["Authorization"] = `Bearer ${session.access_token}`;
