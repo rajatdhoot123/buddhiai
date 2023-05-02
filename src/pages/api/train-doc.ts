@@ -6,19 +6,15 @@ import { SupabaseVectorStore } from "langchain/vectorstores/supabase";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { createClient } from "@supabase/supabase-js";
 import axios from "axios";
+import { v5 as uuidv5 } from "uuid";
+import { sanitizeTableName } from "../../utils";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   try {
-    const supabase = createServerSupabaseClient(
-      { req, res },
-      {
-        supabaseKey: process.env.SUPABASE_ADMIN,
-        supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
-      }
-    );
+    const supabase = createServerSupabaseClient({ req, res });
 
     const {
       data: { session },
@@ -32,13 +28,31 @@ export default async function handler(
       });
     }
 
+    const { filename } = req.body;
     const {
       data: { signedUrl },
-      error,
     } = await supabase.storage
       .from("buddhi_docs")
-      .createSignedUrl(`${session.user.id}/EFFN272494 (3).pdf`, 60 * 60);
+      .createSignedUrl(`${session.user.id}/${filename}`, 60 * 60);
 
+    const supaadmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_ADMIN
+    );
+
+    const sanitiseTable = sanitizeTableName(filename);
+    const tableName = uuidv5(sanitiseTable, session.user.id);
+    const response = await supaadmin.rpc("create_documents_table", {
+      tablename: tableName,
+    });
+
+    if (response.error) {
+      return res.status(500).json({
+        status: "failed",
+        message: "Something went wrong",
+        reason: response.error,
+      });
+    }
     const { data } = await axios.get(signedUrl, {
       responseType: "arraybuffer",
     });
@@ -47,7 +61,6 @@ export default async function handler(
 
     const rawDocs = await pdfLoader.load();
 
-    console.log({ rawDocs });
     /* Split text into chunks */
     const textSplitter = new RecursiveCharacterTextSplitter({
       chunkSize: 1000,
@@ -59,17 +72,17 @@ export default async function handler(
 
     console.log("creating vector store...");
     /*create and store the embeddings in the vectorStore*/
-    // const embeddings = new OpenAIEmbeddings();
+    const embeddings = new OpenAIEmbeddings();
 
-    // const vectorStore = await SupabaseVectorStore.fromDocuments(
-    //   docs,
-    //   embeddings,
-    //   {
-    //     client: supabase,
-    //     tableName: "documents",
-    //     queryName: "match_documents",
-    //   }
-    // );
+    const vectorStore = await SupabaseVectorStore.fromDocuments(
+      docs,
+      embeddings,
+      {
+        client: supabase,
+        tableName: tableName,
+        queryName: "match_documents",
+      }
+    );
 
     return res
       .status(200)
