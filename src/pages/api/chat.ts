@@ -3,12 +3,14 @@ import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { SupabaseVectorStore } from "langchain/vectorstores/supabase";
 import { makeChain } from "../../../utils/makechain";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { sanitizeTableName } from "../../utils";
+import { v5 as uuidv5 } from "uuid";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { question, history } = req.body;
+  const { question, history, filename } = req.body;
 
   //only accept post requests
   if (req.method !== "POST") {
@@ -18,6 +20,10 @@ export default async function handler(
 
   if (!question) {
     return res.status(400).json({ message: "No question in the request" });
+  }
+
+  if (!filename) {
+    return res.status(400).json({ message: "Filename required" });
   }
 
   const supabase = createServerSupabaseClient({ req, res });
@@ -35,14 +41,15 @@ export default async function handler(
   }
   // OpenAI recommends replacing newlines with spaces for best results
   const sanitizedQuestion = question.trim().replaceAll("\n", " ");
-
+  const sanitiseTable = sanitizeTableName(filename);
+  const tableName = uuidv5(sanitiseTable, session.user.id);
   try {
     /* create vectorstore*/
     const vectorStore = await SupabaseVectorStore.fromExistingIndex(
       new OpenAIEmbeddings({}),
       {
         client: supabase,
-        tableName: "documents",
+        tableName: tableName,
         queryName: "match_documents",
       }
     );
@@ -55,7 +62,6 @@ export default async function handler(
       chat_history: history || [],
     });
 
-    console.log("response", response);
     res.status(200).json(response);
   } catch (error: any) {
     console.log("error", error);

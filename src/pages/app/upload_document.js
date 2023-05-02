@@ -36,14 +36,19 @@ function UploadDropzone(props) {
   };
 
   const handleFileUpload = async () => {
-    const result = await trainDocs();
-    console.log({ result });
-    // supabaseClient.storage
-    //   .from("buddhi_docs")
-    //   .upload(`${user.id}/${file.name}`, file, {
-    //     cacheControl: "3600",
-    //     upsert: false,
-    //   });
+    const { data } = await supabaseClient.storage
+      .from("buddhi_docs")
+      .upload(`${user.id}/${file.name}`, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+    if (data.path) {
+      try {
+        const result = await trainDocs({ filename: data.path.split("/")[2] });
+        console.log({ result });
+      } catch (err) {}
+    }
   };
 
   return (
