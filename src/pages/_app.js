@@ -7,7 +7,7 @@ import Image from "next/image";
 import { WHATSAPP_SUPPORT_NUMBER } from "@/constant";
 import Head from "next/head";
 import axios from "axios";
-import { SocketProvider } from "@/context/SocketContext";
+// import { SocketProvider } from "@/context/SocketContext";
 import { startApi } from "./api";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -95,23 +95,23 @@ function App({ Component, pageProps }) {
         supabaseClient={supabaseClient}
         initialSession={pageProps.initialSession}
       >
-        <SocketProvider>
-          <main className={inter.className}>
-            <Component {...pageProps} />
-          </main>
-          <a
-            target="_blank"
-            href={`https://api.whatsapp.com/send?phone=${WHATSAPP_SUPPORT_NUMBER}&text=hello`}
-            className="h-12 w-12 fixed bottom-6 right-6 z-50"
-          >
-            <Image
-              className="bg-white rounded-full"
-              fill
-              alt="Buddhi AI"
-              src="/whatsapp.png"
-            />
-          </a>
-        </SocketProvider>
+        {/* <SocketProvider> */}
+        <main className={inter.className}>
+          <Component {...pageProps} />
+        </main>
+        <a
+          target="_blank"
+          href={`https://api.whatsapp.com/send?phone=${WHATSAPP_SUPPORT_NUMBER}&text=hello`}
+          className="h-12 w-12 fixed bottom-6 right-6 z-50"
+        >
+          <Image
+            className="bg-white rounded-full"
+            fill
+            alt="Buddhi AI"
+            src="/whatsapp.png"
+          />
+        </a>
+        {/* </SocketProvider> */}
       </SessionContextProvider>
     </>
   );
