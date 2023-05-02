@@ -8,7 +8,7 @@ import { WHATSAPP_SUPPORT_NUMBER } from "@/constant";
 import Head from "next/head";
 import axios from "axios";
 import { SocketProvider } from "@/context/SocketContext";
-import { startApi } from "../../api";
+import { startApi } from "./api";
 
 const inter = Inter({ subsets: ["latin"] });
 
