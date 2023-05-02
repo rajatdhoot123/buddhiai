@@ -1,18 +1,18 @@
 import { askQuestion } from "../../axios";
 import ChatMessage from "@/components/ChatMessage";
+import ThreeDotMenu from "@/components/ThreeDotMenu";
 // import { useSocket } from "@/context/SocketContext";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { FaRobot, FaPaperPlane } from "react-icons/fa";
+import { FaEllipsisH, FaPaperPlane } from "react-icons/fa";
 import { v4 as uuidv4 } from "uuid";
 
 const LEFT_ICONS = [{ label: "Agent" }];
 
 const App = () => {
   const [state, setState] = useState([]);
-  const supabaseClient = useSupabaseClient();
-  const router = useRouter();
+  const user = useUser();
   // const socket = useSocket();
 
   const handleSubmit = async (event) => {
@@ -43,18 +43,17 @@ const App = () => {
         <div className="flex flex-col justify-between h-full">
           <ul>
             {LEFT_ICONS.map(({ label }) => (
-              <li key={label}>{label}</li>
+              <li className="text-white" key={label}>
+                {label}
+              </li>
             ))}
           </ul>
-          <button
-            onClick={async () => {
-              await supabaseClient.auth.signOut();
-              router.push("/");
-            }}
-            className="text-center bg-red-300 rounded-md text-white py-2"
-          >
-            Signout
-          </button>
+          <ThreeDotMenu>
+            <div className="flex items-center justify-between">
+              <div className="w-3/4 truncate">{user?.email}</div>
+              <FaEllipsisH className="w-1/4" />
+            </div>
+          </ThreeDotMenu>
         </div>
       </div>
       <div className="col-span-10 overflow-y-scroll">
