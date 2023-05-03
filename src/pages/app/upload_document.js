@@ -27,20 +27,23 @@ const UploadedFiles = ({ file, handleTrainFile }) => {
     >
       <div>
         <div>{file.name}</div>
-        {!file.is_available && (
-          <div className="text-xs text-green-300 ">
-            Please trained the docs to get started
-          </div>
-        )}
+
+        <div className={`text-xs ${file.is_available ? "text-green-300" : "text-red-300" } `}>
+          {file.is_available
+            ? "Please trained the docs to get started"
+            : "This file is trained chat with your agent"}
+        </div>
       </div>
-      <button
-        disabled={loading}
-        onClick={handleFileTraining}
-        className="bg-indigo-400 text-white text-sm font-bold px-2 rounded-md"
-      >
-        {loading && <Loader />}
-        <span>Train Me</span>
-      </button>
+      {!file.is_available && (
+        <button
+          disabled={loading}
+          onClick={handleFileTraining}
+          className="bg-indigo-400 text-white text-sm font-bold px-2 rounded-md flex items-center"
+        >
+          {loading && <Loader />}
+          <span>Train Me</span>
+        </button>
+      )}
     </li>
   );
 };
