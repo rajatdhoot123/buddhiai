@@ -56,7 +56,7 @@ function UploadDropzone() {
           setIsLoading("Hold on we are training your docs");
           const uploadedFiles = await addNewUploadedFile();
           await trainDocs({ filename: file.name });
-          updateFile(
+          updateFiles(
             uploadedFiles.map((ufile) =>
               ufile.name === file.name
                 ? { ...ufile, is_available: true }
