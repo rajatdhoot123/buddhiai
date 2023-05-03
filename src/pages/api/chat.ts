@@ -1,11 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
-import { SupabaseVectorStore } from "langchain/vectorstores/supabase";
 import { makeChain } from "../../../utils/makechain";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { sanitizeTableName } from "../../utils";
 import { v5 as uuidv5 } from "uuid";
 import { createClient } from "@supabase/supabase-js";
+import { HNSWLib } from "langchain/vectorstores/hnswlib";
+import { join } from "path";
 
 export default async function handler(
   req: NextApiRequest,
@@ -51,14 +52,9 @@ export default async function handler(
   );
   try {
     /* create vectorstore*/
-    const vectorStore = await SupabaseVectorStore.fromExistingIndex(
-      new OpenAIEmbeddings({}),
-      {
-        client: supaadmin,
-        tableName: tableName,
-        queryName: "query_41dddca6-e4b3-5342-9f15-d68734669c66",
-      }
-    );
+    const directory = join(process.cwd(), "HNSWLib", filename);
+
+    const vectorStore = await HNSWLib.load(directory, new OpenAIEmbeddings());
 
     //create chain
     const chain = makeChain(vectorStore);

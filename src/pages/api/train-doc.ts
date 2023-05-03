@@ -2,12 +2,13 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { CustomPDFLoader } from "../../../utils/customPDFLoader";
-import { SupabaseVectorStore } from "langchain/vectorstores/supabase";
+import { HNSWLib } from "langchain/vectorstores/hnswlib";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { createClient } from "@supabase/supabase-js";
 import axios from "axios";
 import { v5 as uuidv5 } from "uuid";
 import { sanitizeTableName } from "../../utils";
+import { join } from "path";
 
 export default async function handler(
   req: NextApiRequest,
@@ -42,18 +43,6 @@ export default async function handler(
 
     const sanitiseTable = sanitizeTableName(filename);
     const tableName = uuidv5(sanitiseTable, session.user.id);
-    const response = await supaadmin.rpc("create_documents_table", {
-      tablename: tableName,
-      policyname: "Access by auth user only",
-    });
-
-    if (response.error) {
-      return res.status(500).json({
-        status: "failed",
-        message: "Something went wrong",
-        reason: response.error,
-      });
-    }
     const { data } = await axios.get(signedUrl, {
       responseType: "arraybuffer",
     });
@@ -75,15 +64,11 @@ export default async function handler(
     /*create and store the embeddings in the vectorStore*/
     const embeddings = new OpenAIEmbeddings();
 
-    const vectorStore = await SupabaseVectorStore.fromDocuments(
-      docs,
-      embeddings,
-      {
-        client: supaadmin,
-        tableName: tableName,
-        queryName: "match_documents",
-      }
-    );
+    const vectorStore = await HNSWLib.fromDocuments(docs, embeddings);
+
+    const directory = join(process.cwd(), "HNSWLib", filename);
+
+    await vectorStore.save(directory);
 
     return res
       .status(200)
