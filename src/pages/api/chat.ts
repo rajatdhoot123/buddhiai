@@ -2,9 +2,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { makeChain } from "../../../utils/makechain";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { sanitizeTableName } from "../../utils";
-import { v5 as uuidv5 } from "uuid";
-import { createClient } from "@supabase/supabase-js";
 import { HNSWLib } from "langchain/vectorstores/hnswlib";
 import { join } from "path";
 
@@ -43,13 +40,7 @@ export default async function handler(
   }
   // OpenAI recommends replacing newlines with spaces for best results
   const sanitizedQuestion = question.trim().replaceAll("\n", " ");
-  const sanitiseTable = sanitizeTableName(filename);
-  const tableName = uuidv5(sanitiseTable, session.user.id);
 
-  const supaadmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_ADMIN
-  );
   try {
     /* create vectorstore*/
     const directory = join(process.cwd(), "HNSWLib", filename);

@@ -6,8 +6,6 @@ import { HNSWLib } from "langchain/vectorstores/hnswlib";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { createClient } from "@supabase/supabase-js";
 import axios from "axios";
-import { v5 as uuidv5 } from "uuid";
-import { sanitizeTableName } from "../../utils";
 import { join } from "path";
 
 export default async function handler(
@@ -41,8 +39,6 @@ export default async function handler(
       process.env.SUPABASE_ADMIN
     );
 
-    const sanitiseTable = sanitizeTableName(filename);
-    const tableName = uuidv5(sanitiseTable, session.user.id);
     const { data } = await axios.get(signedUrl, {
       responseType: "arraybuffer",
     });
@@ -74,7 +70,6 @@ export default async function handler(
       .status(200)
       .json({ status: "success", message: "Document trained Successfully" });
   } catch (error) {
-    console.log(error);
     return res.status(200).json({
       status: "failed",
       message: "Something went wrong",
