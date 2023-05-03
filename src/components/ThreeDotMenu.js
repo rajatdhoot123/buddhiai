@@ -1,11 +1,9 @@
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRef, useState } from "react";
 import useClickOutside from "../hooks/clickOutside";
 import { useRouter } from "next/router";
 import { useApp } from "../context/AppContext";
 
 function ThreeDotMenu({ children }) {
-  const supabaseClient = useSupabaseClient();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef();
   const router = useRouter();
@@ -46,16 +44,6 @@ function ThreeDotMenu({ children }) {
                 </button>
               ))
             )}
-            <div className="w-full h-0.5 bg-slate-400" />
-            <button
-              className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700 w-full"
-              onClick={async () => {
-                await supabaseClient.auth.signOut();
-                router.push("/");
-              }}
-            >
-              Signout
-            </button>
           </div>
         </div>
       )}
