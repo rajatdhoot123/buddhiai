@@ -10,6 +10,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import AppLayout from "../layout/app";
 import { AppProvider } from "../context/AppContext";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -86,6 +87,7 @@ function App({ Component, pageProps }) {
         <meta name="twitter:image" content="/og_image.webp" />
         <meta name="twitter:card" content="/og_image.webp" />
       </Head>
+      <Toaster />
       <SessionContextProvider
         supabaseClient={supabaseClient}
         initialSession={pageProps.initialSession}
