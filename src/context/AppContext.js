@@ -44,12 +44,13 @@ const AppProvider = ({ children = null }) => {
         sortBy: { column: "name", order: "asc" },
       });
     const files = data.filter(({ name }) => name !== ".emptyFolderPlaceholder");
+    const { data: isFileAvailable } = await checkFileExist({ files });
 
     dispatch({
       type: SET_ALL_DOS,
-      payload: files,
+      payload: isFileAvailable.data,
     });
-    return files;
+    return isFileAvailable.data;
   };
 
   const updateFiles = (files) => {
