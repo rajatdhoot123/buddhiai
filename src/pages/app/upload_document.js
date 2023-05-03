@@ -5,8 +5,10 @@ import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { trainDocs } from "../../axios";
 import { useApp } from "../../context/AppContext";
+import Loader from "../../components/Loader";
 
 function UploadDropzone() {
+  const [isLoading, setIsLoading] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState(null);
 
@@ -39,18 +41,23 @@ function UploadDropzone() {
   };
 
   const handleFileUpload = async () => {
-    const { data } = await supabaseClient.storage
-      .from("buddhi_docs")
-      .upload(`${user.id}/${file.name}`, file, {
-        cacheControl: "3600",
-        upsert: false,
-      });
-
-    if (data?.path) {
-      try {
-        const result = await trainDocs({ filename: file.name });
-        console.log({ result });
-      } catch (err) {}
+    try {
+      setIsLoading("Uploading File Please wait");
+      const { data } = await supabaseClient.storage
+        .from("buddhi_docs")
+        .upload(`${user.id}/${file.name}`, file, {
+          cacheControl: "3600",
+          upsert: false,
+        });
+      if (data?.path) {
+        try {
+          setIsLoading("Hold on we are training your docs");
+          const result = await trainDocs({ filename: file.name });
+        } catch (err) {}
+      }
+    } catch (err) {
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -122,10 +129,12 @@ function UploadDropzone() {
         )}
       </div>
       <button
+        disabled={isLoading}
         onClick={handleFileUpload}
-        className="w-full bg-indigo-500 text-white my-5 rounded-md py-3 font-bold"
+        className="w-full flex justify-center bg-indigo-500 text-white my-5 rounded-md py-3 font-bold"
       >
-        Start Upload
+        {isLoading && <Loader />}
+        <span>{isLoading || "Start Upload"}</span>
       </button>
       <div className="w-full h-0.5 bg-white my-12"></div>
       <ul className="space-y-5">
