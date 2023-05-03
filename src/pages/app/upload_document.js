@@ -8,6 +8,43 @@ import { useApp } from "../../context/AppContext";
 import Loader from "../../components/Loader";
 import toast from "react-hot-toast";
 
+const UploadedFiles = ({ file, handleTrainFile }) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleFileTraining = async () => {
+    try {
+      setLoading(true);
+      await handleTrainFile(file);
+    } catch (err) {
+    } finally {
+      setLoading(false);
+    }
+  };
+  return (
+    <li
+      className="text-white border border-white border-opacity-60 rounded-md p-2 flex justify-between"
+      key={file.id}
+    >
+      <div>
+        <div>{file.name}</div>
+        {!file.is_available && (
+          <div className="text-xs text-green-300 ">
+            Please trained the docs to get started
+          </div>
+        )}
+      </div>
+      <button
+        disabled={loading}
+        onClick={handleFileTraining}
+        className="bg-indigo-400 text-white text-sm font-bold px-2 rounded-md"
+      >
+        {loading && <Loader />}
+        <span>Train Me</span>
+      </button>
+    </li>
+  );
+};
+
 function UploadDropzone() {
   const [isLoading, setIsLoading] = useState("");
   const [isDragging, setIsDragging] = useState(false);
@@ -43,7 +80,7 @@ function UploadDropzone() {
 
   const handleTrainFile = async (file) => {
     try {
-      setIsLoading("Hold on we are training your docs");
+      toast("Hold on we are training your docs");
       const uploadedFiles = await addNewUploadedFile();
       await trainDocs({ filename: file.name });
       updateFiles(
@@ -155,25 +192,11 @@ function UploadDropzone() {
       <div className="w-full h-0.5 bg-white my-12"></div>
       <ul className="space-y-5">
         {files.map((file) => (
-          <li
-            className="text-white border border-white border-opacity-60 rounded-md p-2 flex justify-between"
+          <UploadedFiles
+            handleTrainFile={handleTrainFile}
             key={file.id}
-          >
-            <div>
-              <div>{file.name}</div>
-              {!file.is_available && (
-                <div className="text-xs text-green-300 ">
-                  Please trained the docs to get started
-                </div>
-              )}
-            </div>
-            <button
-              onClick={() => handleTrainFile(file)}
-              className="bg-indigo-400 text-white text-sm font-bold px-2 rounded-md"
-            >
-              Train Me
-            </button>
-          </li>
+            file={file}
+          />
         ))}
       </ul>
     </div>
