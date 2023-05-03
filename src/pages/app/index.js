@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { v4 as uuidv4 } from "uuid";
 import { useApp } from "../../context/AppContext";
+import toast from "react-hot-toast";
 
 const App = () => {
   const [state, setState] = useState([]);
@@ -11,11 +12,11 @@ const App = () => {
   const { activeFile } = useApp();
 
   const handleSubmit = async (event) => {
+    event.preventDefault();
     if (!activeFile) {
-      if (typeof alert !== "undefined") {
-        alert("Please select file to chat");
-        return;
-      }
+      toast.error("Please select file to chat");
+      event.target.reset();
+      return;
     }
     const formData = new FormData(event.currentTarget);
     let payload = {};
@@ -37,7 +38,6 @@ const App = () => {
       ]);
     }, 500);
     event.target.reset();
-    event.preventDefault();
     try {
       const { data } = await askQuestion({
         question: payload.text,

@@ -6,6 +6,7 @@ import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { trainDocs } from "../../axios";
 import { useApp } from "../../context/AppContext";
 import Loader from "../../components/Loader";
+import toast from "react-hot-toast";
 
 function UploadDropzone() {
   const [isLoading, setIsLoading] = useState("");
@@ -42,6 +43,7 @@ function UploadDropzone() {
 
   const handleFileUpload = async () => {
     try {
+      toast("Uploading Started");
       setIsLoading("Uploading File Please wait");
       const { data } = await supabaseClient.storage
         .from("buddhi_docs")
@@ -53,9 +55,13 @@ function UploadDropzone() {
         try {
           setIsLoading("Hold on we are training your docs");
           const result = await trainDocs({ filename: file.name });
-        } catch (err) {}
+          toast.success("congratulations your file is now trained");
+        } catch (err) {
+          toast.error(err.message);
+        }
       }
     } catch (err) {
+      toast.error(err.message);
     } finally {
       setIsLoading(false);
     }
