@@ -7,13 +7,20 @@ import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 import { FaEllipsisH, FaPaperPlane } from "react-icons/fa";
 import { v4 as uuidv4 } from "uuid";
+import { useApp } from "../../context/AppContext";
 
 const App = () => {
   const [state, setState] = useState([]);
   const user = useUser();
   const lastMessageRef = useRef(null);
+  const { activeFile } = useApp();
 
   const handleSubmit = async (event) => {
+    if (!activeFile) {
+      if (typeof alert !== "undefined") {
+        alert("Please select file to chat");
+      }
+    }
     const formData = new FormData(event.currentTarget);
     let payload = {};
     for (let [key, value] of formData.entries()) {
@@ -36,7 +43,10 @@ const App = () => {
     event.target.reset();
     event.preventDefault();
     try {
-      const { data } = await askQuestion({ question: payload.text });
+      const { data } = await askQuestion({
+        question: payload.text,
+        filename: activeFile.name,
+      });
       setState((prev) => prev.filter((_, index) => index !== prev.length - 1));
       setState((prev) => [
         ...prev,

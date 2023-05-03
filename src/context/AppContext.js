@@ -11,22 +11,35 @@ import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 const AppContext = createContext();
 
 const SET_ALL_DOS = "set_all_docs";
+const SET_FILE_ACTIVE = "set_file_active";
 
 const reducer = (state, action) => {
   switch (action.type) {
     case SET_ALL_DOS:
       return { ...state, files: action.payload || [] };
+    case SET_FILE_ACTIVE:
+      return {
+        ...state,
+        activeFile:
+          state.files.find((file) => file.id === action.payload) || null,
+      };
     default:
       return state;
   }
 };
 
 const AppProvider = ({ children = null }) => {
-  const [state, dispatch] = useReducer(reducer, { files: [] });
+  const [state, dispatch] = useReducer(reducer, {
+    files: [],
+    activeFile: null,
+  });
   const supabaseClient = useSupabaseClient();
   const user = useUser();
   const userId = user?.id;
 
+  const handleActiveFile = (fileId) => {
+    dispatch({ type: SET_FILE_ACTIVE, payload: fileId });
+  };
   useEffect(() => {
     if (userId) {
       (async () => {
@@ -48,7 +61,11 @@ const AppProvider = ({ children = null }) => {
     }
   }, [userId]);
 
-  return <AppContext.Provider value={state}>{children}</AppContext.Provider>;
+  return (
+    <AppContext.Provider value={{ ...state, handleActiveFile }}>
+      {children}
+    </AppContext.Provider>
+  );
 };
 
 function useApp() {
