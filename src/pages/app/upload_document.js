@@ -4,10 +4,13 @@ import { FaRegFilePdf } from "react-icons/fa";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { trainDocs } from "../../axios";
+import { useApp } from "../../context/AppContext";
 
-function UploadDropzone(props) {
+function UploadDropzone() {
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState(null);
+
+  const { files = [] } = useApp();
 
   const supabaseClient = useSupabaseClient();
   const user = useUser();
@@ -36,19 +39,19 @@ function UploadDropzone(props) {
   };
 
   const handleFileUpload = async () => {
-    const { data } = await supabaseClient.storage
-      .from("buddhi_docs")
-      .upload(`${user.id}/${file.name}`, file, {
-        cacheControl: "3600",
-        upsert: false,
-      });
+    // const { data } = await supabaseClient.storage
+    //   .from("buddhi_docs")
+    //   .upload(`${user.id}/${file.name}`, file, {
+    //     cacheControl: "3600",
+    //     upsert: false,
+    //   });
 
-    if (data.path) {
+    // if (data?.path) {
       try {
-        const result = await trainDocs({ filename: data.path.split("/")[2] });
+        const result = await trainDocs({ filename: file.name });
         console.log({ result });
       } catch (err) {}
-    }
+    // }
   };
 
   return (
@@ -126,7 +129,7 @@ function UploadDropzone(props) {
       </button>
       <div className="w-full h-0.5 bg-white my-12"></div>
       <ul className="space-y-5">
-        {props.data.map((file) => (
+        {files.map((file) => (
           <li className="text-white" key={file.id}>
             {file.name}
           </li>
@@ -135,38 +138,5 @@ function UploadDropzone(props) {
     </div>
   );
 }
-
-export const getServerSideProps = async (ctx) => {
-  // Create authenticated Supabase Client
-  const supabase = createServerSupabaseClient(ctx);
-  // Check if we have a session
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  if (!session)
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-
-  const { data } = await supabase.storage
-    .from("buddhi_docs")
-    .list(session.user.id, {
-      limit: 100,
-      offset: 0,
-      sortBy: { column: "name", order: "asc" },
-    });
-
-  return {
-    props: {
-      initialSession: session,
-      user: session.user,
-      data: data ?? [],
-    },
-  };
-};
 
 export default UploadDropzone;

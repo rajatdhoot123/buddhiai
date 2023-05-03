@@ -9,6 +9,7 @@ import Head from "next/head";
 import axios from "axios";
 import { useRouter } from "next/router";
 import AppLayout from "../layout/app";
+import { AppProvider } from "../context/AppContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -91,9 +92,11 @@ function App({ Component, pageProps }) {
       >
         <main className={inter.className}>
           {router.pathname.startsWith("/app") ? (
-            <AppLayout>
-              <Component {...pageProps} />
-            </AppLayout>
+            <AppProvider>
+              <AppLayout>
+                <Component {...pageProps} />
+              </AppLayout>
+            </AppProvider>
           ) : (
             <Component {...pageProps} />
           )}
