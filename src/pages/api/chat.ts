@@ -5,6 +5,7 @@ import { makeChain } from "../../../utils/makechain";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { sanitizeTableName } from "../../utils";
 import { v5 as uuidv5 } from "uuid";
+import { createClient } from "@supabase/supabase-js";
 
 export default async function handler(
   req: NextApiRequest,
@@ -44,14 +45,18 @@ export default async function handler(
   const sanitiseTable = sanitizeTableName(filename);
   const tableName = uuidv5(sanitiseTable, session.user.id);
 
+  const supaadmin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_ADMIN
+  );
   try {
     /* create vectorstore*/
     const vectorStore = await SupabaseVectorStore.fromExistingIndex(
       new OpenAIEmbeddings({}),
       {
-        client: supabase,
+        client: supaadmin,
         tableName: tableName,
-        queryName: "match_documents",
+        queryName: "query_demo",
       }
     );
 
