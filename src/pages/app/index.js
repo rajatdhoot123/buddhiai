@@ -1,17 +1,12 @@
 import { askQuestion } from "../../axios";
 import ChatMessage from "@/components/ChatMessage";
-import ThreeDotMenu from "@/components/ThreeDotMenu";
-// import { useSocket } from "@/context/SocketContext";
-import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import { useRouter } from "next/router";
 import { useRef, useState } from "react";
-import { FaEllipsisH, FaPaperPlane } from "react-icons/fa";
+import { FaPaperPlane } from "react-icons/fa";
 import { v4 as uuidv4 } from "uuid";
 import { useApp } from "../../context/AppContext";
 
 const App = () => {
   const [state, setState] = useState([]);
-  const user = useUser();
   const lastMessageRef = useRef(null);
   const { activeFile } = useApp();
 
