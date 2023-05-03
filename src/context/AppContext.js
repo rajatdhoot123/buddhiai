@@ -34,6 +34,31 @@ const AppProvider = ({ children = null }) => {
   const handleActiveFile = (fileId) => {
     dispatch({ type: SET_FILE_ACTIVE, payload: fileId });
   };
+
+  const addNewUploadedFile = async () => {
+    const { data } = await supabaseClient.storage
+      .from("buddhi_docs")
+      .list(userId, {
+        limit: 100,
+        offset: 0,
+        sortBy: { column: "name", order: "asc" },
+      });
+    const files = data.filter(({ name }) => name !== ".emptyFolderPlaceholder");
+
+    dispatch({
+      type: SET_ALL_DOS,
+      payload: files,
+    });
+    return files;
+  };
+
+  const updateFiles = (files) => {
+    dispatch({
+      type: SET_ALL_DOS,
+      payload: files,
+    });
+  };
+
   useEffect(() => {
     if (userId) {
       (async () => {
@@ -58,7 +83,9 @@ const AppProvider = ({ children = null }) => {
   }, [userId]);
 
   return (
-    <AppContext.Provider value={{ ...state, handleActiveFile }}>
+    <AppContext.Provider
+      value={{ ...state, handleActiveFile, addNewUploadedFile, updateFiles }}
+    >
       {children}
     </AppContext.Provider>
   );

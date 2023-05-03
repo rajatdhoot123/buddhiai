@@ -13,7 +13,7 @@ function UploadDropzone() {
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState(null);
 
-  const { files = [] } = useApp();
+  const { files = [], addNewUploadedFile, updateFiles } = useApp();
 
   const supabaseClient = useSupabaseClient();
   const user = useUser();
@@ -54,7 +54,15 @@ function UploadDropzone() {
       if (data?.path) {
         try {
           setIsLoading("Hold on we are training your docs");
-          const result = await trainDocs({ filename: file.name });
+          const uploadedFiles = await addNewUploadedFile();
+          await trainDocs({ filename: file.name });
+          updateFile(
+            uploadedFiles.map((ufile) =>
+              ufile.name === file.name
+                ? { ...ufile, is_available: true }
+                : ufile
+            )
+          );
           toast.success("congratulations your file is now trained");
         } catch (err) {
           toast.error(err.message);
