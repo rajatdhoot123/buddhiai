@@ -43,6 +43,7 @@ export default async function handler(
   const sanitizedQuestion = question.trim().replaceAll("\n", " ");
   const sanitiseTable = sanitizeTableName(filename);
   const tableName = uuidv5(sanitiseTable, session.user.id);
+
   try {
     /* create vectorstore*/
     const vectorStore = await SupabaseVectorStore.fromExistingIndex(
