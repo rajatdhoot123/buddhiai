@@ -56,7 +56,7 @@ export default async function handler(
       {
         client: supaadmin,
         tableName: tableName,
-        queryName: "query_demo",
+        queryName: "query_41dddca6-e4b3-5342-9f15-d68734669c66",
       }
     );
 

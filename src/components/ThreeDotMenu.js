@@ -2,6 +2,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRef, useState } from "react";
 import useClickOutside from "../hooks/clickOutside";
 import { useRouter } from "next/router";
+import { useApp } from "../context/AppContext";
 
 function ThreeDotMenu({ children }) {
   const supabaseClient = useSupabaseClient();
@@ -11,6 +12,7 @@ function ThreeDotMenu({ children }) {
   useClickOutside(dropdownRef, () => {
     setIsOpen(false);
   });
+  const { files = [], handleActiveFile } = useApp();
   return (
     <div ref={dropdownRef} className="relative">
       <div className="inline-flex items-center overflow-hidden rounded-md w-full">
@@ -28,6 +30,17 @@ function ThreeDotMenu({ children }) {
           role="menu"
         >
           <div className="p-2">
+            <small className="font-semibold">Active File</small>
+            {files.map((file) => (
+              <button
+                key={file.id}
+                className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700 w-full"
+                onClick={() => handleActiveFile(file.id)}
+              >
+                {file.name}
+              </button>
+            ))}
+            <div className="w-full h-0.5 bg-slate-400" />
             <button
               className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700 w-full"
               onClick={async () => {
