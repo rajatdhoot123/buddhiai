@@ -43,7 +43,7 @@ export default async function handler(
 
   try {
     /* create vectorstore*/
-    const directory = join(process.cwd(), "HNSWLib", filename);
+    const directory = join(process.cwd(), "HNSWLib", session.user.id, filename);
 
     const vectorStore = await HNSWLib.load(directory, new OpenAIEmbeddings());
 

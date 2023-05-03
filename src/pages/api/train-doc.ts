@@ -62,7 +62,7 @@ export default async function handler(
 
     const vectorStore = await HNSWLib.fromDocuments(docs, embeddings);
 
-    const directory = join(process.cwd(), "HNSWLib", filename);
+    const directory = join(process.cwd(), "HNSWLib", session.user.id, filename);
 
     await vectorStore.save(directory);
 
