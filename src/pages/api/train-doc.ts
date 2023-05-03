@@ -42,23 +42,18 @@ export default async function handler(
 
     const sanitiseTable = sanitizeTableName(filename);
     const tableName = uuidv5(sanitiseTable, session.user.id);
-    // const response = await supaadmin.rpc("create_documents_table", {
-    //   tablename: tableName,
-    //   policyname: "Access by auth user only",
-    // });
-    const createQuery = await supaadmin.rpc("create_match_documents_function", {
-      table_name: tableName,
-      function_name: `query_${tableName}`,
+    const response = await supaadmin.rpc("create_documents_table", {
+      tablename: tableName,
+      policyname: "Access by auth user only",
     });
 
-    console.log(createQuery);
-    // if (response.error) {
+    if (response.error) {
       return res.status(500).json({
         status: "failed",
         message: "Something went wrong",
-        // reason: response.error,
+        reason: response.error,
       });
-    // }
+    }
     const { data } = await axios.get(signedUrl, {
       responseType: "arraybuffer",
     });
@@ -78,17 +73,17 @@ export default async function handler(
 
     console.log("creating vector store...");
     /*create and store the embeddings in the vectorStore*/
-    // const embeddings = new OpenAIEmbeddings();
+    const embeddings = new OpenAIEmbeddings();
 
-    // const vectorStore = await SupabaseVectorStore.fromDocuments(
-    //   docs,
-    //   embeddings,
-    //   {
-    //     client: supaadmin,
-    //     tableName: tableName,
-    //     queryName: "match_documents",
-    //   }
-    // );
+    const vectorStore = await SupabaseVectorStore.fromDocuments(
+      docs,
+      embeddings,
+      {
+        client: supaadmin,
+        tableName: tableName,
+        queryName: "match_documents",
+      }
+    );
 
     return res
       .status(200)
