@@ -13,6 +13,8 @@ function ThreeDotMenu({ children }) {
     setIsOpen(false);
   });
   const { files = [], handleActiveFile } = useApp();
+
+  const availableFiles = files.filter((file) => file.is_available);
   return (
     <div ref={dropdownRef} className="relative">
       <div className="inline-flex items-center overflow-hidden rounded-md w-full">
@@ -31,15 +33,19 @@ function ThreeDotMenu({ children }) {
         >
           <div className="p-2">
             <small className="font-semibold">Active File</small>
-            {files.map((file) => (
-              <button
-                key={file.id}
-                className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700 w-full"
-                onClick={() => handleActiveFile(file.id)}
-              >
-                {file.name}
-              </button>
-            ))}
+            {!availableFiles.length ? (
+              <div>No files</div>
+            ) : (
+              availableFiles.map((file) => (
+                <button
+                  key={file.id}
+                  className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700 w-full"
+                  onClick={() => handleActiveFile(file.id)}
+                >
+                  {file.name}
+                </button>
+              ))
+            )}
             <div className="w-full h-0.5 bg-slate-400" />
             <button
               className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700 w-full"

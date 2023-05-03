@@ -146,7 +146,14 @@ function UploadDropzone() {
       <ul className="space-y-5">
         {files.map((file) => (
           <li className="text-white" key={file.id}>
-            {file.name}
+            <div>
+              <div>{file.name}</div>
+              {!file.is_available && (
+                <div className="text-xs text-green-300">
+                  Please trained the docs to get started
+                </div>
+              )}
+            </div>
           </li>
         ))}
       </ul>

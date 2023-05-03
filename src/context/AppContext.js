@@ -1,12 +1,6 @@
-import { io } from "socket.io-client";
-import {
-  useContext,
-  useEffect,
-  createContext,
-  useState,
-  useReducer,
-} from "react";
+import { useContext, useEffect, createContext, useReducer } from "react";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { checkFileExist } from "../axios";
 
 const AppContext = createContext();
 
@@ -50,12 +44,14 @@ const AppProvider = ({ children = null }) => {
             offset: 0,
             sortBy: { column: "name", order: "asc" },
           });
+        const files = data.filter(
+          ({ name }) => name !== ".emptyFolderPlaceholder"
+        );
 
+        const { data: isFileAvailable } = await checkFileExist({ files });
         dispatch({
           type: SET_ALL_DOS,
-          payload: data.filter(
-            ({ name }) => name !== ".emptyFolderPlaceholder"
-          ),
+          payload: isFileAvailable.data,
         });
       })();
     }
