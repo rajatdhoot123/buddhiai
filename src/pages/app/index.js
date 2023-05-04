@@ -11,7 +11,7 @@ const App = () => {
   const [state, setState] = useState([]);
   const lastMessageRef = useRef(null);
   const { activeFile, files, handleActiveFile } = useApp();
-
+  const [history, setHistory] = useState([]);
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!activeFile) {
@@ -42,9 +42,10 @@ const App = () => {
     try {
       const { data } = await askQuestion({
         question: payload.text,
-        history: state.map((list) => list.text),
+        history: history,
         filename: activeFile.name,
       });
+      setHistory((prev) => [...prev, [payload.text, data.text]]);
       setState((prev) => prev.filter((_, index) => index !== prev.length - 1));
       setState((prev) => [
         ...prev,
