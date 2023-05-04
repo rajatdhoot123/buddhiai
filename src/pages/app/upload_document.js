@@ -7,7 +7,6 @@ import { trainDocs } from "../../axios";
 import { useApp } from "../../context/AppContext";
 import Loader from "../../components/Loader";
 import toast from "react-hot-toast";
-import Image from "next/image";
 
 const UploadedFiles = ({ file, handleTrainFile }) => {
   const [loading, setLoading] = useState(false);

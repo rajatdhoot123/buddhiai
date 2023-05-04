@@ -42,6 +42,7 @@ const App = () => {
     try {
       const { data } = await askQuestion({
         question: payload.text,
+        history: state.map((list) => list.text),
         filename: activeFile.name,
       });
       setState((prev) => prev.filter((_, index) => index !== prev.length - 1));
