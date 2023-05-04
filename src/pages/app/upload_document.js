@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { HiUpload } from "react-icons/hi";
-import { FaRegFilePdf } from "react-icons/fa";
+import { FaRegFilePdf, FaWhatsapp } from "react-icons/fa";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { WHATSAPP_SUPPORT_NUMBER } from "../../constant";
 import { trainDocs } from "../../axios";
 import { useApp } from "../../context/AppContext";
 import Loader from "../../components/Loader";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 const UploadedFiles = ({ file, handleTrainFile }) => {
   const [loading, setLoading] = useState(false);
@@ -131,86 +132,105 @@ function UploadDropzone() {
   const disabledUpload = isLoading || !file;
   return (
     <div className="m-12">
-      <div
-        className={`${
-          isDragging
-            ? "border-green-500 bg-green-50"
-            : "border-gray-300 bg-white"
-        } border-2 border-dashed rounded-lg p-8 flex flex-col items-center justify-center text-gray-600`}
-        onDragEnter={handleDragEnter}
-        onDragLeave={handleDragLeave}
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
-      >
-        {file ? (
-          <div className="relative">
-            <div className="overflow-hidden rounded-lg">
-              {file.type === "application/pdf" ? (
-                <a
-                  href={URL.createObjectURL(file)}
-                  target="_blank"
-                  className="flex justify-center flex-col items-center"
-                >
-                  <FaRegFilePdf className="w-24 h-24" />
-                  <span className="text-center text-xs font-bold my-2">
-                    View File
-                  </span>
-                </a>
-              ) : (
-                <img
-                  src={URL.createObjectURL(file)}
-                  alt={file.name}
-                  className="w-full h-40 object-cover"
-                />
-              )}
-            </div>
-            <button
-              type="button"
-              className="h-8 w-8 absolute top-0 right-0 rounded-full bg-gray-300 p-1 text-gray-700 hover:bg-gray-400 hover:text-white"
-              onClick={handleRemoveFile}
-            >
-              &times;
-            </button>
+      {files.length >= 5 ? (
+        <div>
+          <div className="text-center text-3xl text-white">
+            Currently In free version we are allowing 5 files to train
           </div>
-        ) : (
-          <>
-            <label htmlFor="file-upload" className="cursor-pointer underline">
-              <HiUpload className="h-12 w-12 m-auto" aria-hidden="true" />
-              <div className="text-center">
-                <p className="text-sm font-medium">
-                  {isDragging
-                    ? "Drop pdf file here"
-                    : "Drag and drop pdf file here"}
-                </p>
-                <p className="text-gray-500 text-lg font-bold">
-                  Click here to upload pdf file
-                </p>
-                <input
-                  accept="application/pdf"
-                  id="file-upload"
-                  name="file-upload"
-                  type="file"
-                  className="sr-only"
-                  onChange={(event) => {
-                    const files = Array.from(event.target.files);
-                    setFile(files[0]);
-                  }}
-                />
+          <div className="bg-green-500 w-full rounded-md p-2 mt-5">
+            <a
+              className="flex items-center justify-center text-xl"
+              target="_blank"
+              href={`https://api.whatsapp.com/send?phone=${WHATSAPP_SUPPORT_NUMBER}&text=hello`}
+            >
+              <FaWhatsapp className="text-white" />
+              <span className="text-white font-bold ml-2">Contact Us </span>
+            </a>
+          </div>
+        </div>
+      ) : (
+        <div
+          className={`${
+            isDragging
+              ? "border-green-500 bg-green-50"
+              : "border-gray-300 bg-white"
+          } border-2 border-dashed rounded-lg p-8 flex flex-col items-center justify-center text-gray-600`}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+        >
+          {file ? (
+            <div className="relative">
+              <div className="overflow-hidden rounded-lg">
+                {file.type === "application/pdf" ? (
+                  <a
+                    href={URL.createObjectURL(file)}
+                    target="_blank"
+                    className="flex justify-center flex-col items-center"
+                  >
+                    <FaRegFilePdf className="w-24 h-24" />
+                    <span className="text-center text-xs font-bold my-2">
+                      View File
+                    </span>
+                  </a>
+                ) : (
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt={file.name}
+                    className="w-full h-40 object-cover"
+                  />
+                )}
               </div>
-            </label>
-          </>
-        )}
-      </div>
-      <button
-        disabled={disabledUpload}
-        onClick={handleFileUpload}
-        className={`w-full flex justify-center bg-indigo-500 text-white my-5 rounded-md py-3 font-bold ${
-          disabledUpload ? "bg-opacity-60 text-opacity-60" : ""
-        }`}
-      >
-        {isLoading && <Loader />}
-        <span>{isLoading || "Start Upload"}</span>
-      </button>
+              <button
+                type="button"
+                className="h-8 w-8 absolute top-0 right-0 rounded-full bg-gray-300 p-1 text-gray-700 hover:bg-gray-400 hover:text-white"
+                onClick={handleRemoveFile}
+              >
+                &times;
+              </button>
+            </div>
+          ) : (
+            <>
+              <label htmlFor="file-upload" className="cursor-pointer underline">
+                <HiUpload className="h-12 w-12 m-auto" aria-hidden="true" />
+                <div className="text-center">
+                  <p className="text-sm font-medium">
+                    {isDragging
+                      ? "Drop pdf file here"
+                      : "Drag and drop pdf file here"}
+                  </p>
+                  <p className="text-gray-500 text-lg font-bold">
+                    Click here to upload pdf file
+                  </p>
+                  <input
+                    accept="application/pdf"
+                    id="file-upload"
+                    name="file-upload"
+                    type="file"
+                    className="sr-only"
+                    onChange={(event) => {
+                      const files = Array.from(event.target.files);
+                      setFile(files[0]);
+                    }}
+                  />
+                </div>
+              </label>
+            </>
+          )}
+          <button
+            disabled={disabledUpload}
+            onClick={handleFileUpload}
+            className={`w-full flex justify-center bg-indigo-500 text-white my-5 rounded-md py-3 font-bold ${
+              disabledUpload ? "bg-opacity-60 text-opacity-60" : ""
+            }`}
+          >
+            {isLoading && <Loader />}
+            <span>{isLoading || "Start Upload"}</span>
+          </button>
+        </div>
+      )}
+
       <div className="w-full h-0.5 bg-white my-12"></div>
       <ul className="space-y-5">
         {files.map((file) => (
