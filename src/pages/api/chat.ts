@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { makeChain } from "../../../utils/makechain";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { Chroma } from "langchain/vectorstores/chroma";
+import { HNSWLib } from "langchain/vectorstores/hnswlib";
 import { join } from "path";
 
 export default async function handler(
@@ -43,12 +43,9 @@ export default async function handler(
 
   try {
     /* create vectorstore*/
-    // const directory = join(process.cwd(), "HNSWLib", session.user.id, filename);
+    const directory = join(process.cwd(), "HNSWLib", session.user.id, filename);
 
-    const vectorStore = await Chroma.fromExistingCollection(
-      new OpenAIEmbeddings(),
-      { collectionName: filename }
-    );
+    const vectorStore = await HNSWLib.load(directory, new OpenAIEmbeddings());
 
     //create chain
     const chain = makeChain(vectorStore);

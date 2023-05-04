@@ -79,7 +79,7 @@ const App = () => {
               <div className="text-white font-medium text-3xl my-5">
                 Select doc and start talking to your agent{" "}
               </div>
-              <div className="w-full flex items-center justify-center">
+              <div className="w-full flex flex-col items-center space-y-3">
                 {files.map((file) =>
                   file.is_available ? (
                     <button
