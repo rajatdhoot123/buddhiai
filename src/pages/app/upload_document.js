@@ -103,6 +103,13 @@ function UploadDropzone() {
 
   const handleFileUpload = async () => {
     try {
+      const size = (file.size / (1024 * 1024)).toFixed(2);
+      if (size > 4) {
+        toast(
+          "For free version we support file less than 4mb. Contact us for larger files"
+        );
+        return;
+      }
       toast("Uploading Started");
       setIsLoading("Uploading File Please wait");
       const { data } = await supabaseClient.storage
@@ -171,7 +178,9 @@ function UploadDropzone() {
               <HiUpload className="h-12 w-12 m-auto" aria-hidden="true" />
               <div className="text-center">
                 <p className="text-sm font-medium">
-                  {isDragging ? "Drop pdf file here" : "Drag and drop pdf file here"}
+                  {isDragging
+                    ? "Drop pdf file here"
+                    : "Drag and drop pdf file here"}
                 </p>
                 <p className="text-gray-500 text-lg font-bold">
                   Click here to upload pdf file
