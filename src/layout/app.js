@@ -6,6 +6,7 @@ import { useApp } from "../context/AppContext";
 import { HiOutlineDocumentDuplicate } from "react-icons/hi";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import Loader from "../components/Loader";
 
 const LEFT_ICONS = [
   { label: "AI Agent", link: "/app" },
@@ -15,7 +16,7 @@ const LEFT_ICONS = [
 const App = ({ children }) => {
   const [activeRoute, setActiveRoute] = useState("/app");
   const supabaseClient = useSupabaseClient();
-  const { activeFile } = useApp();
+  const { activeFile, docsLoading } = useApp();
   const router = useRouter();
 
   useEffect(() => {
@@ -74,7 +75,16 @@ const App = ({ children }) => {
           </ThreeDotMenu> */}
         </div>
       </div>
-      <div className="col-span-10 overflow-y-scroll">{children}</div>
+      <div className="col-span-10 overflow-y-scroll">
+        {docsLoading ? (
+          <div className="h-full flex justify-center items-center">
+            <Loader />
+            <div className="text-white">Loading...</div>
+          </div>
+        ) : (
+          children
+        )}
+      </div>
     </div>
   );
 };

@@ -28,9 +28,13 @@ const UploadedFiles = ({ file, handleTrainFile }) => {
       <div>
         <div>{file.name}</div>
 
-        <div className={`text-xs ${file.is_available ? "text-green-300" : "text-red-300" } `}>
+        <div
+          className={`text-xs ${
+            file.is_available ? "text-green-300" : "text-red-300"
+          } `}
+        >
           {file.is_available
-            ? "Please trained the docs to get started"
+            ? "Docs Trained"
             : "This file is trained chat with your agent"}
         </div>
       </div>
@@ -117,6 +121,7 @@ function UploadDropzone() {
     }
   };
 
+  const disabledUpload = isLoading || !file;
   return (
     <div className="m-12">
       <div
@@ -166,10 +171,13 @@ function UploadDropzone() {
               <HiUpload className="h-12 w-12 m-auto" aria-hidden="true" />
               <div className="text-center">
                 <p className="text-sm font-medium">
-                  {isDragging ? "Drop file here" : "Drag and drop file here"}
+                  {isDragging ? "Drop pdf file here" : "Drag and drop pdf file here"}
                 </p>
-                <p className="text-xs text-gray-500">or {` for a file`}</p>
+                <p className="text-gray-500 text-lg font-bold">
+                  Click here to upload pdf file
+                </p>
                 <input
+                  accept="application/pdf"
                   id="file-upload"
                   name="file-upload"
                   type="file"
@@ -185,9 +193,11 @@ function UploadDropzone() {
         )}
       </div>
       <button
-        disabled={isLoading}
+        disabled={disabledUpload}
         onClick={handleFileUpload}
-        className="w-full flex justify-center bg-indigo-500 text-white my-5 rounded-md py-3 font-bold"
+        className={`w-full flex justify-center bg-indigo-500 text-white my-5 rounded-md py-3 font-bold ${
+          disabledUpload ? "bg-opacity-60 text-opacity-60" : ""
+        }`}
       >
         {isLoading && <Loader />}
         <span>{isLoading || "Start Upload"}</span>

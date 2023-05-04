@@ -5,11 +5,12 @@ import { FaPaperPlane } from "react-icons/fa";
 import { v4 as uuidv4 } from "uuid";
 import { useApp } from "../../context/AppContext";
 import toast from "react-hot-toast";
+import Link from "next/link";
 
 const App = () => {
   const [state, setState] = useState([]);
   const lastMessageRef = useRef(null);
-  const { activeFile } = useApp();
+  const { activeFile, files, handleActiveFile } = useApp();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -58,6 +59,44 @@ const App = () => {
   return (
     <div className="flex flex-col justify-between h-full gap-5">
       <div className="flex-1 h-full overflow-y-scroll">
+        {!files.filter(({ is_available }) => is_available).length ? (
+          <div className="h-full w-full flex-col flex items-center justify-center">
+            <Link
+              href="/app/upload_document"
+              className="border border-white border-opacity-60 p-3 rounded-lg"
+            >
+              <div className="text-white font-medium text-3xl text-center">
+                Upload your doc
+              </div>
+              <div className="text-white mt-2 text-center">
+                Will get your agent trained
+              </div>
+            </Link>
+          </div>
+        ) : (
+          !activeFile && (
+            <div className="h-full w-full flex-col flex items-center justify-center">
+              <div className="text-white font-medium text-3xl my-5">
+                Select doc and start talking to your agent{" "}
+              </div>
+              <div className="w-full flex items-center justify-center">
+                {files.map((file) =>
+                  file.is_available ? (
+                    <button
+                      onClick={() => {
+                        handleActiveFile(file.id);
+                      }}
+                      key={file.id}
+                      className="text-white border-white border-opacity-50 border rounded-md w-1/2 py-3"
+                    >
+                      {file.name}
+                    </button>
+                  ) : null
+                )}
+              </div>
+            </div>
+          )
+        )}
         {state.map((el) =>
           el.type === "thinking" ? (
             <div key={el.id}>
