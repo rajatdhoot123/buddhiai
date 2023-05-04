@@ -103,18 +103,20 @@ function App({ Component, pageProps }) {
             <Component {...pageProps} />
           )}
         </main>
-        <a
-          target="_blank"
-          href={`https://api.whatsapp.com/send?phone=${WHATSAPP_SUPPORT_NUMBER}&text=hello`}
-          className="h-12 w-12 fixed bottom-6 right-6 z-50"
-        >
-          <Image
-            className="bg-white rounded-full"
-            fill
-            alt="Buddhi AI"
-            src="/whatsapp.png"
-          />
-        </a>
+        {!router.pathname.startsWith("/app") && (
+          <a
+            target="_blank"
+            href={`https://api.whatsapp.com/send?phone=${WHATSAPP_SUPPORT_NUMBER}&text=hello`}
+            className="h-12 w-12 fixed bottom-6 right-6 z-50"
+          >
+            <Image
+              className="bg-white rounded-full"
+              fill
+              alt="Buddhi AI"
+              src="/whatsapp.png"
+            />
+          </a>
+        )}
       </SessionContextProvider>
     </>
   );

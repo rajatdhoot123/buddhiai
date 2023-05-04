@@ -78,7 +78,7 @@ const App = () => {
         ) : (
           !activeFile && (
             <div className="h-full w-full flex-col flex items-center justify-center">
-              <div className="text-white font-medium text-3xl my-5">
+              <div className="text-white font-medium text-3xl my-5 text-center">
                 Select doc and start talking to your agent{" "}
               </div>
               <div className="w-full flex flex-col items-center space-y-3">
@@ -127,7 +127,7 @@ const App = () => {
           ref={lastMessageRef}
         ></div>
       </div>
-      <div className="px-44 mb-12">
+      <div className="md:px-44 px-2 md:mb-12 mb-5">
         <form onSubmit={handleSubmit} className="flex">
           <input
             name="text"

@@ -7,38 +7,79 @@ import { HiOutlineDocumentDuplicate } from "react-icons/hi";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Loader from "../components/Loader";
-
+import useMediaQuery from "../hooks/useMediaQuery";
 const LEFT_ICONS = [
   { label: "AI Agent", link: "/app" },
   { label: "Upload and Train", link: "/app/upload_document" },
 ];
 
 const App = ({ children }) => {
+  const isDesktop = useMediaQuery("(min-width: 760px)");
+  const [isOpen, setIsOpen] = useState(false);
   const [activeRoute, setActiveRoute] = useState("/app");
   const supabaseClient = useSupabaseClient();
   const { activeFile, docsLoading } = useApp();
   const router = useRouter();
 
   useEffect(() => {
+    if (isDesktop) {
+      setIsOpen(true);
+    }
+  }, [isDesktop]);
+
+  useEffect(() => {
     setActiveRoute(router.pathname);
   }, [router.pathname, setActiveRoute]);
 
   return (
-    <div className="grid grid-cols-12 chat-bg h-screen">
-      <div className="col-span-2 h-full bg-[#202123]">
-        <div className="flex flex-col justify-between h-full">
-          <ul className="space-y-4 m-5">
-            {LEFT_ICONS.map(({ label, link }) => (
-              <li
-                className={`${
-                  activeRoute === link ? "" : "text-opacity-60"
-                } text-white border-opacity-40`}
-                key={label}
-              >
-                <Link href={link}>{label}</Link>
-              </li>
-            ))}
-          </ul>
+    <div className="grid chat-bg h-screen">
+      <button
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="fixed p-5 text-white md:hidden"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-6 h-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+      </button>
+      <div
+        className={`w-full md:w-48 bg-[#202123] top-0 fixed left-0 h-full  transition-transform duration-300 transform ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex flex-col justify-between h-full relative">
+          <button
+            className="absolute right-0 p-5 md:hidden"
+            onClick={() => setIsOpen((prev) => !prev)}
+          >
+            <strong className="text-[28px] text-white align-center cursor-pointer alert-del">
+              &times;
+            </strong>
+          </button>
+          <div>
+            <ul className="space-y-4 m-5">
+              {LEFT_ICONS.map(({ label, link }) => (
+                <li
+                  className={`${
+                    activeRoute === link ? "" : "text-opacity-60"
+                  } text-white border-opacity-40`}
+                  key={label}
+                >
+                  <Link href={link}>{label}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
           <div>
             <div className="h-0.5 bg-white bg-opacity-25 mb-5" />
             <ul className="space-y-4 m-5">
@@ -75,7 +116,7 @@ const App = ({ children }) => {
           </ThreeDotMenu> */}
         </div>
       </div>
-      <div className="col-span-10 overflow-y-scroll">
+      <div className="md:ml-48 overflow-y-scroll">
         {docsLoading ? (
           <div className="h-full flex justify-center items-center">
             <Loader />
