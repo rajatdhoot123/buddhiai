@@ -53,7 +53,7 @@ const App = ({ children }) => {
         </svg>
       </button>
       <div
-        className={`w-full md:w-48 bg-[#202123] top-0 fixed left-0 h-full  transition-transform duration-300 transform ${
+        className={`z-10 w-full md:w-48 bg-[#202123] top-0 fixed left-0 h-full  transition-transform duration-300 transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -116,7 +116,7 @@ const App = ({ children }) => {
           </ThreeDotMenu> */}
         </div>
       </div>
-      <div className="md:ml-48 overflow-y-scroll">
+      <div className="md:ml-48 overflow-y-scroll pt-12 md:pt-5">
         {docsLoading ? (
           <div className="h-full flex justify-center items-center">
             <Loader />
