@@ -34,7 +34,11 @@ const ChatMessage = React.forwardRef(({ message, type }, ref) => {
             <Thinking />
           </span>
         )}
-        <span>{message.text}</span>
+
+        <span
+          className="whitespace-pre-line"
+          dangerouslySetInnerHTML={{ __html: message.text }}
+        ></span>
       </div>
     </div>
   );

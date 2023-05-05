@@ -1,11 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
+import { CustomPDFLoader } from "../../../utils/customPDFLoader";
 import { HNSWLib } from "langchain/vectorstores/hnswlib";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from "@supabase/supabase-js";
+import { JSONLoader } from "langchain/document_loaders/fs/json";
 import axios from "axios";
 import { join } from "path";
-import { CSVLoader } from "langchain/document_loaders/fs/csv";
+import mime from "mime-types";
 
 export default async function handler(
   req: NextApiRequest,
@@ -33,13 +36,20 @@ export default async function handler(
       .from("buddhi_docs")
       .createSignedUrl(`${session.user.id}/${filename}`, 60 * 60);
 
+    const supaadmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_ADMIN
+    );
+
     const { data } = await axios.get(signedUrl, {
       responseType: "arraybuffer",
     });
 
-    const csvLoader = new CSVLoader(new Blob([data]), "text");
+    // const loader = new JSONLoader(data);
 
-    const rawDocs = await csvLoader.load();
+    const loader = new JSONLoader(new Blob([data]));
+
+    const rawDocs = await loader.load();
 
     /* Split text into chunks */
     const textSplitter = new RecursiveCharacterTextSplitter({
