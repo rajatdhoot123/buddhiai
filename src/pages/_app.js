@@ -87,7 +87,6 @@ function App({ Component, pageProps }) {
         <meta name="twitter:image" content="/og_image.webp" />
         <meta name="twitter:card" content="/og_image.webp" />
       </Head>
-      <Toaster />
       <SessionContextProvider
         supabaseClient={supabaseClient}
         initialSession={pageProps.initialSession}
@@ -118,6 +117,7 @@ function App({ Component, pageProps }) {
           </a>
         )}
       </SessionContextProvider>
+      <Toaster />
     </>
   );
 }
