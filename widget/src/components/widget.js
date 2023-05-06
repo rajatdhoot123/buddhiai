@@ -107,7 +107,7 @@ function Chat({ api, ...props }) {
         </svg>
       </div>
       {isOpen && (
-        <div className="flex flex-col fixed md:bottom-20 md:right-4 md:w-80 w-full md:h-96 bg-white rounded-lg shadow-md z-50 h-screen">
+        <div className="top-0 md:top-auto flex flex-col fixed md:bottom-20 md:right-4 md:w-80 w-full md:h-96 bg-white rounded-lg shadow-md z-50 h-screen">
           <div className="bg-blue-500 text-white px-4 py-2 rounded-t-lg flex items-center justify-between">
             <h3 className="text-lg font-medium">Chat with us!</h3>
             <button onClick={toggleChat}>
