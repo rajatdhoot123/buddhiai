@@ -49,7 +49,6 @@ function App({ Component, pageProps }) {
     <>
       <Head>
         <link rel="icon" type="image/png" href="/logo.png" />
-
         <title>
           Document to Chatbot Converter: Convert Any Text into Engaging Chatbots
         </title>
@@ -67,7 +66,7 @@ function App({ Component, pageProps }) {
         <link rel="icon" href="/logo.png" type="image/x-icon" />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://buddhiai.app" />
-        <link href="/buddi_widget/index.js" rel="stylesheet"/>
+        <link href="/buddi_widget/index.js" rel="stylesheet" />
         <meta
           property="og:title"
           content="Document to Chatbot Converter: Convert Any Text into Engaging Chatbots"
@@ -104,8 +103,9 @@ function App({ Component, pageProps }) {
             <Component {...pageProps} />
           )}
         </main>
-        <Script src="/buddi_widget/index.js" />
-        <div data-api="buddhi_app_demo" className="buddhi-app-chat" />
+        {!router.pathname.startsWith("/chat") && (
+          <Script src="/buddi_widget/min-buddhi.js" />
+        )}
       </SessionContextProvider>
       <Toaster />
     </>

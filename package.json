@@ -7,9 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "ingest": "tsx -r dotenv/config scripts/ingest-data.ts",
-    "widget:build": "cp src/pages/chat.js widget/src/components/widget.js && parcel build widget/src/index.js --no-source-maps --dist-dir public/buddi_widget",
-    "widget:react": "react-scripts build"
+    "ingest": "tsx -r dotenv/config scripts/ingest-data.ts"
   },
   "dependencies": {
     "@calcom/embed-react": "^1.0.12",
