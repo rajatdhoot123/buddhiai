@@ -67,7 +67,7 @@ function App({ Component, pageProps }) {
         <link rel="icon" href="/logo.png" type="image/x-icon" />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://buddhiai.app" />
-        <link href="/buddhi_chat.css" rel="stylesheet"/>
+        <link href="/buddi_widget/index.js" rel="stylesheet"/>
         <meta
           property="og:title"
           content="Document to Chatbot Converter: Convert Any Text into Engaging Chatbots"
@@ -104,7 +104,7 @@ function App({ Component, pageProps }) {
             <Component {...pageProps} />
           )}
         </main>
-        <Script src="/buddhi_chat.js" />
+        <Script src="/buddi_widget/index.js" />
         <div data-api="buddhi_app_demo" className="buddhi-app-chat" />
       </SessionContextProvider>
       <Toaster />
