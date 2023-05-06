@@ -1,3 +1,5 @@
+const { v4 } = require("uuid");
+const fs = require("fs");
 const x = {
   products: [
     {
@@ -1936,4 +1938,16 @@ const modified_list = x.products.map((product, index) => ({
   rating: product.rating,
   images: product.images,
   category: product.category,
+  link: `https://buddhiai.app/${v4()}`,
 }));
+
+const final = modified_list.reduce((acc, current) => {
+  return [
+    ...acc,
+    `Product Name: ${current.title},description: ${current.description}, category: ${current.category},image: ${current.images}, Price: ${current.price}, link: ${current.link} \n\n`,
+  ];
+}, []);
+
+console.log(final.join(""));
+
+fs.writeFile("myjsonfile.txt", final.join(""), "utf8", () => {});
