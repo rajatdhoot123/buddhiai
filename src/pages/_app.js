@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import AppLayout from "../layout/app";
 import { AppProvider } from "../context/AppContext";
 import { Toaster } from "react-hot-toast";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -66,6 +67,7 @@ function App({ Component, pageProps }) {
         <link rel="icon" href="/logo.png" type="image/x-icon" />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://buddhiai.app" />
+        <link href="/buddhi_chat.css" rel="stylesheet"/>
         <meta
           property="og:title"
           content="Document to Chatbot Converter: Convert Any Text into Engaging Chatbots"
@@ -102,20 +104,8 @@ function App({ Component, pageProps }) {
             <Component {...pageProps} />
           )}
         </main>
-        {!router.pathname.startsWith("/app") && (
-          <a
-            target="_blank"
-            href={`https://api.whatsapp.com/send?phone=${WHATSAPP_SUPPORT_NUMBER}&text=hello`}
-            className="h-12 w-12 fixed bottom-6 right-6 z-50"
-          >
-            <Image
-              className="bg-white rounded-full"
-              fill
-              alt="Buddhi AI"
-              src="/whatsapp.png"
-            />
-          </a>
-        )}
+        <Script src="/buddhi_chat.js" />
+        <div data-api="buddhi_app_demo" className="buddhi-app-chat" />
       </SessionContextProvider>
       <Toaster />
     </>
