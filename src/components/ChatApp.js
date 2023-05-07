@@ -4,14 +4,17 @@ import { useEffect, useRef, useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { v4 as uuidv4 } from "uuid";
 import toast from "react-hot-toast";
+import { EmbedHeader } from "../components/Embed";
+import { useRouter } from "next/router";
 
-const ChatApp = ({ activeFile, buddhiAppId }) => {
+const ChatApp = ({ activeFile, buddhiAppId, styles }) => {
   const [state, setState] = useState([]);
-  const lastMessageRef = useRef(null);
-  const [history, setHistory] = useState([]);
 
+  const [history, setHistory] = useState([]);
+  const divRef = useRef(null);
+  const router = useRouter();
   useEffect(() => {
-    lastMessageRef.current.scrollTop = lastMessageRef.current.scrollHeight;
+    divRef.current.scrollIntoView({ behavior: "smooth" });
   }, [state]);
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -55,13 +58,18 @@ const ChatApp = ({ activeFile, buddhiAppId }) => {
     } catch (err) {
       console.log(err);
     } finally {
-      // lastMessageRef?.current?.scrollIntoView({ behavior: "smooth" });
     }
   };
 
   return (
-    <div className="flex flex-col justify-between h-full gap-5">
-      <div ref={lastMessageRef} className="h-full overflow-y-scroll">
+    <div className={`h-screen flex flex-col ${styles?.bgColor}`}>
+      {router.pathname.startsWith("/embed") ? (
+        <EmbedHeader />
+      ) : (
+        <div>&nbsp;</div>
+      )}
+
+      <div className="flex-1 overflow-y-auto">
         {state.map((el) => (
           <ChatMessage
             key={el.id}
@@ -72,9 +80,13 @@ const ChatApp = ({ activeFile, buddhiAppId }) => {
             type={el.type}
           />
         ))}
+        <div ref={divRef} />
       </div>
-      <div className="md:px-44 px-2 md:mb-12 pb-2">
-        <form onSubmit={handleSubmit} className="flex">
+      <form
+        onSubmit={handleSubmit}
+        className="items-end text-center md:px-44 p-2"
+      >
+        <div className="flex">
           <input
             name="text"
             placeholder="Ask Anything"
@@ -83,8 +95,18 @@ const ChatApp = ({ activeFile, buddhiAppId }) => {
           <button type="submit" className="bg-white px-5 rounded-r-md">
             <FaPaperPlane />
           </button>
-        </form>
-      </div>
+        </div>
+        <small className="py-0.5 text-white text-center">
+          Powered by{" "}
+          <a
+            href="https://buddhiai.app"
+            target="_blank"
+            className="text-indigo-500"
+          >
+            buddhiai
+          </a>
+        </small>
+      </form>
     </div>
   );
 };

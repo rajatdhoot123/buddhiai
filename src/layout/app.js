@@ -32,10 +32,10 @@ const App = ({ children }) => {
   }, [router.pathname, setActiveRoute]);
 
   return (
-    <div className="grid bg-[#343541] h-screen">
+    <div className="grid bg-[#343541] min-h-screen">
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="fixed p-5 text-white md:hidden"
+        className="fixed p-5 text-white md:hidden z-10"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -116,7 +116,7 @@ const App = ({ children }) => {
           </ThreeDotMenu> */}
         </div>
       </div>
-      <div className="md:ml-48 overflow-y-scroll pt-12 md:pt-5">
+      <div className="md:ml-48">
         {docsLoading ? (
           <div className="h-full flex justify-center items-center">
             <Loader />
