@@ -71,7 +71,15 @@ const ChatApp = ({ activeFile, buddhiAppId, styles, initial_message = "" }) => {
         { id: uuidv4(), type: "answer", text: data.text },
       ]);
     } catch (err) {
-      console.log(err);
+      setState((prev) => prev.filter((_, index) => index !== prev.length - 1));
+      setState((prev) => [
+        ...prev,
+        {
+          id: uuidv4(),
+          type: "answer",
+          text: "Something went wrong please try again",
+        },
+      ]);
     } finally {
     }
   };
