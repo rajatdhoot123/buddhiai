@@ -7,7 +7,7 @@ import { trainDocs } from "../../axios";
 import { useApp } from "../../context/AppContext";
 import Loader from "../../components/Loader";
 import toast from "react-hot-toast";
-
+import FormDemo from "../../components/Form";
 import {
   Dialog,
   DialogContent,
@@ -163,7 +163,8 @@ function UploadDropzone() {
   const disabledUpload = isLoading || !file;
   return (
     <div className="m-12">
-      {files.length >= 5 ? (
+      <FormDemo />
+      {!files.length >= 5 ? (
         <div>
           <div className="text-center text-3xl text-white">
             Currently In free version we are allowing 5 files to train
