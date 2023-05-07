@@ -32,9 +32,10 @@
   });
 
   window.onmessage = function (e) {
-    console.log(e);
-    if (e.data == "hello") {
-      alert("It works!");
+    if (e.origin == "https://buddhiai.app" && e.data === "closeBuddhiChat") {
+      chatIcon.innerHTML = messageSvg;
+      iframeContainer.classList.remove("buddhi_flex");
+      iframeContainer.classList.add("buddhi_hidden");
     }
   };
 
@@ -70,6 +71,7 @@
 }
 
 #chat-iframe {
+  border-radius: 6px;
   flex-grow: 1;
 }
 
@@ -81,8 +83,6 @@
   width: 350px;
   height: 80vh;
   border: none;
-  background-color: #fff;
-  border-radius: 10px;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
   z-index: 9998;
 }
@@ -110,11 +110,14 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #fff;
-    border-radius: 0;
     box-shadow: none;
     z-index: 9998;
     animation: chat-frame-open 0.5s ease-in-out;
+  }
+
+  #chat-iframe {
+    border-radius: 0px;
+    flex-grow: 1;
   }
 
   #close-btn {

@@ -7,7 +7,7 @@ const App = () => {
   const { query } = useRouter();
   const handleClose = () => {
     if (typeof window !== "undefined") {
-      window.top.postMessage("hello", "*");
+      window.top.postMessage("closeBuddhiChat", "*");
     }
   };
 
