@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { EmbedHeader } from "../components/Embed";
 import { useRouter } from "next/router";
 
-const ChatApp = ({ activeFile, buddhiAppId, styles }) => {
+const ChatApp = ({ activeFile, buddhiAppId, styles, initial_message = "" }) => {
   const [state, setState] = useState([]);
 
   const [history, setHistory] = useState([]);
@@ -15,17 +15,19 @@ const ChatApp = ({ activeFile, buddhiAppId, styles }) => {
   const router = useRouter();
 
   useEffect(() => {
-    setTimeout(() => {
-      setState((prev) => [
-        ...prev,
-        {
-          type: "answer",
-          id: uuidv4(),
-          text: "Hello, you can ask me what is buddhi ai",
-        },
-      ]);
-    }, 200);
-  }, []);
+    if (initial_message) {
+      setTimeout(() => {
+        setState((prev) => [
+          ...prev,
+          {
+            type: "answer",
+            id: uuidv4(),
+            text: initial_message,
+          },
+        ]);
+      }, 200);
+    }
+  }, [initial_message]);
   useEffect(() => {
     divRef.current.scrollIntoView({ behavior: "smooth" });
   }, [state]);

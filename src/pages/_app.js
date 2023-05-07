@@ -104,6 +104,7 @@ function App({ Component, pageProps }) {
             <>
               {!router.pathname.startsWith("/embed") && (
                 <Script
+                  initial_message="Hello you can ask me what is buddhi ai"
                   buddhi_api_id="eyJmaWxlbmFtZSI6IkJ1ZGRoaV9BSV9Ld2lrdHdpay5wZGYiLCJ1c2VySWQiOiJjODAzYzg5Ny1jOWQ3LTQ2M2QtOTNlZi01NmY1MjVmM2VlOWMifQ=="
                   src="https://www.buddhiai.app/buddi_widget/min-buddhi.js"
                   async

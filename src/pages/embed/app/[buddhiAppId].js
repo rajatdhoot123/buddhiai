@@ -8,6 +8,7 @@ const App = () => {
 
   return (
     <ChatApp
+      initial_message={query.initial_message}
       styles={{ bgColor: "bg-[#343541]" }}
       buddhiAppId={query?.buddhiAppId}
     />
