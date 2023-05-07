@@ -17,7 +17,6 @@
   // select elements
   const chatIcon = document.getElementById("chat-icon");
   const iframeContainer = document.getElementById("chat-iframe-container");
-  const chatIframe = document.getElementById("chat-iframe");
 
   // add event listener to chat icon
   chatIcon.addEventListener("click", () => {
@@ -31,6 +30,13 @@
       iframeContainer.classList.add("buddhi_hidden");
     }
   });
+
+  window.onmessage = function (e) {
+    console.log(e);
+    if (e.data == "hello") {
+      alert("It works!");
+    }
+  };
 
   // add styles to the document
   const styles = `

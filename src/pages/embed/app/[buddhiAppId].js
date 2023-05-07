@@ -7,7 +7,7 @@ const App = () => {
   const { query } = useRouter();
   const handleClose = () => {
     if (typeof window !== "undefined") {
-      window?.parent?.document?.getElementById("chat-icon")?.click();
+      window.top.postMessage("hello", "*");
     }
   };
 
