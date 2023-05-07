@@ -66,7 +66,6 @@ function App({ Component, pageProps }) {
         <link rel="icon" href="/logo.png" type="image/x-icon" />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://buddhiai.app" />
-        <link href="/buddi_widget/index.js" rel="stylesheet" />
         <meta
           property="og:title"
           content="Document to Chatbot Converter: Convert Any Text into Engaging Chatbots"
@@ -94,18 +93,25 @@ function App({ Component, pageProps }) {
       >
         <main className={inter.className}>
           {router.pathname.startsWith("/app") ? (
-            <AppProvider>
-              <AppLayout>
-                <Component {...pageProps} />
-              </AppLayout>
-            </AppProvider>
+            <>
+              <AppProvider>
+                <AppLayout>
+                  <Component {...pageProps} />
+                </AppLayout>
+              </AppProvider>
+            </>
           ) : (
-            <Component {...pageProps} />
+            <>
+              {!router.pathname.startsWith("/embed") && (
+                <Script
+                  buddhi_api_id="myjsonfile.txt"
+                  src="/buddi_widget/min-buddhi.js"
+                />
+              )}
+              <Component {...pageProps} />
+            </>
           )}
         </main>
-        {!router.pathname.startsWith("/chat") && (
-          <Script src="/buddi_widget/min-buddhi.js" />
-        )}
       </SessionContextProvider>
       <Toaster />
     </>
