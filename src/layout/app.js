@@ -32,7 +32,7 @@ const App = ({ children }) => {
   }, [router.pathname, setActiveRoute]);
 
   return (
-    <div className="grid chat-bg h-screen">
+    <div className="grid bg-[#343541] h-screen">
       <button
         onClick={() => setIsOpen((prev) => !prev)}
         className="fixed p-5 text-white md:hidden"

@@ -7,6 +7,11 @@ import { trainDocs } from "../../axios";
 import { useApp } from "../../context/AppContext";
 import Loader from "../../components/Loader";
 import toast from "react-hot-toast";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "../../../components/ui/popover";
 
 const UploadedFiles = ({ file, handleTrainFile }) => {
   const [loading, setLoading] = useState(false);
@@ -38,11 +43,23 @@ const UploadedFiles = ({ file, handleTrainFile }) => {
             : "This file is trained chat with your agent"}
         </div>
       </div>
-      {!file.is_available && (
+      {file.is_available ? (
+        <Popover modal={true}>
+          <PopoverTrigger className="bg-indigo-400 text-white text-sm font-bold px-2 rounded-md flex items-center w-24 justify-center">
+            Embed
+          </PopoverTrigger>
+          <PopoverContent side="top">
+            <div>Add the following script to your website</div>
+            <div className="bg-gray-700 text-white px-5 rounded-md py-2">
+              {`<script buddhi_api_id="${file.name}" src="/buddi_widget/min-buddhi.js" async></script>`}
+            </div>
+          </PopoverContent>
+        </Popover>
+      ) : (
         <button
           disabled={loading}
           onClick={handleFileTraining}
-          className="bg-indigo-400 text-white text-sm font-bold px-2 rounded-md flex items-center"
+          className="bg-indigo-400 text-white text-sm font-bold px-2 rounded-md flex items-center w-24 justify-center"
         >
           {loading && <Loader />}
           <span>Train Me</span>
