@@ -87,7 +87,7 @@ const ChatApp = ({ activeFile, buddhiAppId, styles, initial_message = "" }) => {
   return (
     <div className={`h-screen flex flex-col ${styles?.bgColor}`}>
       {router.pathname.startsWith("/embed") ? (
-        <EmbedHeader />
+        <EmbedHeader onRefresh={() => setState([])} />
       ) : (
         <div>&nbsp;</div>
       )}
