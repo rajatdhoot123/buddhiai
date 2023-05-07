@@ -5,7 +5,7 @@ import { FaPaperPlane } from "react-icons/fa";
 import { v4 as uuidv4 } from "uuid";
 import toast from "react-hot-toast";
 
-const ChatApp = ({ activeFile }) => {
+const ChatApp = ({ activeFile, buddhiAppId }) => {
   const [state, setState] = useState([]);
   const lastMessageRef = useRef(null);
   const [history, setHistory] = useState([]);
@@ -15,7 +15,7 @@ const ChatApp = ({ activeFile }) => {
   }, [state]);
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!activeFile) {
+    if (!(buddhiAppId || activeFile)) {
       toast.error("Please select file to chat");
       event.target.reset();
       return;
@@ -43,7 +43,8 @@ const ChatApp = ({ activeFile }) => {
       const { data } = await askQuestion({
         question: payload.text,
         history: history,
-        filename: activeFile.name,
+        filename: activeFile?.name,
+        buddhiAppId,
       });
       setHistory((prev) => [...prev, [payload.text, data.text]]);
       setState((prev) => prev.filter((_, index) => index !== prev.length - 1));

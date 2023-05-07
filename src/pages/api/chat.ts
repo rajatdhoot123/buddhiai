@@ -4,13 +4,15 @@ import { makeChain } from "../../../utils/makechain";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { HNSWLib } from "langchain/vectorstores/hnswlib";
 import { join } from "path";
+import CryptoJS from "crypto-js";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { question, history, filename } = req.body;
-
+  const { question, history, filename = "", buddhiAppId } = req.body;
+  let userId;
+  let newFileName = filename;
   //only accept post requests
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method not allowed" });
@@ -21,29 +23,45 @@ export default async function handler(
     return res.status(400).json({ message: "No question in the request" });
   }
 
-  if (!filename) {
+  if (!(filename || buddhiAppId)) {
     return res.status(400).json({ message: "Filename required" });
   }
 
-  const supabase = createServerSupabaseClient({ req, res });
-  // Check if we have a session
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  if (filename) {
+    const supabase = createServerSupabaseClient({ req, res });
+    // Check if we have a session
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
-  if (!session) {
-    return res.status(401).json({
-      error: "not_authenticated",
-      description:
-        "The user does not have an active session or is not authenticated",
-    });
+    if (!session) {
+      return res.status(401).json({
+        error: "not_authenticated",
+        description:
+          "The user does not have an active session or is not authenticated",
+      });
+    }
+    userId = session?.user?.id;
+  }
+
+  if (buddhiAppId) {
+    const data = CryptoJS.AES.decrypt(buddhiAppId, "my_buddhi_app").toString(
+      CryptoJS.enc.Utf8
+    );
+    const decryptedData = JSON.parse(data);
+    newFileName = decryptedData.filename;
+    userId = decryptedData.filename;
+  }
+
+  if (!(newFileName || userId)) {
+    return res.status(400).json({ message: "Filename required" });
   }
   // OpenAI recommends replacing newlines with spaces for best results
   const sanitizedQuestion = question.trim().replaceAll("\n", " ");
 
   try {
     /* create vectorstore*/
-    const directory = join(process.cwd(), "HNSWLib", session.user.id, filename);
+    const directory = join(process.cwd(), "HNSWLib", userId, newFileName);
 
     const vectorStore = await HNSWLib.load(directory, new OpenAIEmbeddings());
 

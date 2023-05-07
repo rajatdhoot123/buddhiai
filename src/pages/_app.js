@@ -104,8 +104,9 @@ function App({ Component, pageProps }) {
             <>
               {!router.pathname.startsWith("/embed") && (
                 <Script
-                  buddhi_api_id="myjsonfile.txt"
+                  buddhi_api_id="U2FsdGVkX1+IAkqFchZUNwhdAiyJn1PoT24c3V2rp4b9ufPiJM50w5QkcX6Rwnep"
                   src="/buddi_widget/min-buddhi.js"
+                  async
                 />
               )}
               <Component {...pageProps} />

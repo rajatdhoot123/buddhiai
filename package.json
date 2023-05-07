@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@calcom/embed-react": "^1.0.12",
+    "@radix-ui/react-dialog": "^1.0.3",
     "@radix-ui/react-popover": "^1.0.5",
     "@supabase/auth-helpers-nextjs": "^0.6.1",
     "@supabase/auth-helpers-react": "^0.3.1",
@@ -21,6 +22,7 @@
     "chromadb": "^1.4.1",
     "class-variance-authority": "^0.6.0",
     "clsx": "^1.2.1",
+    "crypto-js": "^4.1.1",
     "d3-dsv": "^2.0.0",
     "dotenv": "^16.0.3",
     "hnswlib-node": "^1.4.2",

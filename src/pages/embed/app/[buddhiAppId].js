@@ -20,7 +20,7 @@ const App = () => {
           <AiOutlineClose onClick={handleClose} className="h-6 w-6" />
         </div>
       </div>
-      <ChatApp activeFile={{ name: query?.buddhiAppId }} />
+      <ChatApp buddhiAppId={query?.buddhiAppId} />
       <small className="text-center py-0.5 text-white">
         Powered by{" "}
         <a
