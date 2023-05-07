@@ -4,18 +4,34 @@ import { useEffect, useRef, useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { v4 as uuidv4 } from "uuid";
 import toast from "react-hot-toast";
+import { EmbedHeader } from "../components/Embed";
+import { useRouter } from "next/router";
 
-const ChatApp = ({ activeFile }) => {
+const ChatApp = ({ activeFile, buddhiAppId, styles }) => {
   const [state, setState] = useState([]);
-  const lastMessageRef = useRef(null);
+
   const [history, setHistory] = useState([]);
+  const divRef = useRef(null);
+  const router = useRouter();
 
   useEffect(() => {
-    lastMessageRef.current.scrollTop = lastMessageRef.current.scrollHeight;
+    setTimeout(() => {
+      setState((prev) => [
+        ...prev,
+        {
+          type: "answer",
+          id: uuidv4(),
+          text: "Hello, you can ask me what is buddhi ai",
+        },
+      ]);
+    }, 200);
+  }, []);
+  useEffect(() => {
+    divRef.current.scrollIntoView({ behavior: "smooth" });
   }, [state]);
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!activeFile) {
+    if (!(buddhiAppId || activeFile)) {
       toast.error("Please select file to chat");
       event.target.reset();
       return;
@@ -43,7 +59,8 @@ const ChatApp = ({ activeFile }) => {
       const { data } = await askQuestion({
         question: payload.text,
         history: history,
-        filename: activeFile.name,
+        filename: activeFile?.name,
+        buddhiAppId,
       });
       setHistory((prev) => [...prev, [payload.text, data.text]]);
       setState((prev) => prev.filter((_, index) => index !== prev.length - 1));
@@ -54,13 +71,18 @@ const ChatApp = ({ activeFile }) => {
     } catch (err) {
       console.log(err);
     } finally {
-      // lastMessageRef?.current?.scrollIntoView({ behavior: "smooth" });
     }
   };
 
   return (
-    <div className="flex flex-col justify-between h-full gap-5">
-      <div ref={lastMessageRef} className="h-full overflow-y-scroll">
+    <div className={`h-screen flex flex-col ${styles?.bgColor}`}>
+      {router.pathname.startsWith("/embed") ? (
+        <EmbedHeader />
+      ) : (
+        <div>&nbsp;</div>
+      )}
+
+      <div className="flex-1 overflow-y-auto">
         {state.map((el) => (
           <ChatMessage
             key={el.id}
@@ -71,9 +93,13 @@ const ChatApp = ({ activeFile }) => {
             type={el.type}
           />
         ))}
+        <div ref={divRef} />
       </div>
-      <div className="md:px-44 px-2 md:mb-12 pb-2">
-        <form onSubmit={handleSubmit} className="flex">
+      <form
+        onSubmit={handleSubmit}
+        className="items-end text-center md:px-44 p-2"
+      >
+        <div className="flex">
           <input
             name="text"
             placeholder="Ask Anything"
@@ -82,8 +108,18 @@ const ChatApp = ({ activeFile }) => {
           <button type="submit" className="bg-white px-5 rounded-r-md">
             <FaPaperPlane />
           </button>
-        </form>
-      </div>
+        </div>
+        <small className="py-0.5 text-white text-center">
+          Powered by{" "}
+          <a
+            href="https://buddhiai.app"
+            target="_blank"
+            className="text-indigo-500"
+          >
+            buddhiai
+          </a>
+        </small>
+      </form>
     </div>
   );
 };

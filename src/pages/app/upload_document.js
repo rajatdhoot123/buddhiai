@@ -7,15 +7,18 @@ import { trainDocs } from "../../axios";
 import { useApp } from "../../context/AppContext";
 import Loader from "../../components/Loader";
 import toast from "react-hot-toast";
+
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "../../../components/ui/popover";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../../../components/ui/dialog";
 
-const UploadedFiles = ({ file, handleTrainFile }) => {
+const UploadedFiles = ({ file, handleTrainFile, userId }) => {
   const [loading, setLoading] = useState(false);
-
   const handleFileTraining = async () => {
     try {
       setLoading(true);
@@ -44,17 +47,29 @@ const UploadedFiles = ({ file, handleTrainFile }) => {
         </div>
       </div>
       {file.is_available ? (
-        <Popover modal={true}>
-          <PopoverTrigger className="bg-indigo-400 text-white text-sm font-bold px-2 rounded-md flex items-center w-24 justify-center">
+        <Dialog>
+          <DialogTrigger className="bg-indigo-400 text-white text-sm font-bold px-2 rounded-md flex items-center w-24 justify-center">
             Embed
-          </PopoverTrigger>
-          <PopoverContent side="top">
-            <div>Add the following script to your website</div>
-            <div className="bg-gray-700 text-white px-5 rounded-md py-2">
-              {`<script buddhi_api_id="${file.name}" src="/buddi_widget/min-buddhi.js" async></script>`}
-            </div>
-          </PopoverContent>
-        </Popover>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                Add the following script to your website
+              </DialogTitle>
+              <DialogDescription className="bg-gray-700 text-white px-5 rounded-md py-2">
+                <textarea
+                  readOnly
+                  rows={7}
+                  className="focus:outline-none w-full bg-transparent"
+                  value={`<script \nbuddhi_api_id="${
+                    typeof window !== "undefined" &&
+                    window.btoa(JSON.stringify({ filename: file.name, userId }))
+                  }" \nsrc="https://www.buddhiai.app/buddi_widget/min-buddhi.js" async>\n</script>`}
+                />
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
       ) : (
         <button
           disabled={loading}
@@ -251,6 +266,7 @@ function UploadDropzone() {
       <ul className="space-y-5">
         {files.map((file) => (
           <UploadedFiles
+            userId={user?.id}
             handleTrainFile={handleTrainFile}
             key={file.id}
             file={file}
