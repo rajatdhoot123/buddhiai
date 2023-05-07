@@ -7,7 +7,7 @@ import { trainDocs } from "../../axios";
 import { useApp } from "../../context/AppContext";
 import Loader from "../../components/Loader";
 import toast from "react-hot-toast";
-import crypto from "crypto-js";
+
 import {
   Dialog,
   DialogContent,
@@ -61,10 +61,10 @@ const UploadedFiles = ({ file, handleTrainFile, userId }) => {
                   readOnly
                   rows={5}
                   className="focus:outline-none w-full bg-transparent"
-                  value={`<script \nbuddhi_api_id="${crypto.AES.encrypt(
-                    JSON.stringify({ filename: file.name, userId }),
-                    "my_buddhi_app"
-                  ).toString()}" \nsrc="/buddi_widget/min-buddhi.js" async>\n</script>`}
+                  value={`<script \nbuddhi_api_id="${
+                    typeof window !== "undefined" &&
+                    window.btoa(JSON.stringify({ filename: file.name, userId }))
+                  }" \nsrc="/buddi_widget/min-buddhi.js" async>\n</script>`}
                 />
               </DialogDescription>
             </DialogHeader>

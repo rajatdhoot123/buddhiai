@@ -4,7 +4,6 @@ import { makeChain } from "../../../utils/makechain";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { HNSWLib } from "langchain/vectorstores/hnswlib";
 import { join } from "path";
-import CryptoJS from "crypto-js";
 
 export default async function handler(
   req: NextApiRequest,
@@ -45,12 +44,10 @@ export default async function handler(
   }
 
   if (buddhiAppId) {
-    const data = CryptoJS.AES.decrypt(buddhiAppId, "my_buddhi_app").toString(
-      CryptoJS.enc.Utf8
-    );
+    const data = Buffer.from(buddhiAppId, "base64").toString(); // Ta-da
     const decryptedData = JSON.parse(data);
     newFileName = decryptedData.filename;
-    userId = decryptedData.filename;
+    userId = decryptedData.userId;
   }
 
   if (!(newFileName || userId)) {

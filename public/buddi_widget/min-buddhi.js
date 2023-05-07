@@ -6,7 +6,7 @@
   // create iframe HTML
   const iframeHtml = `
 <div class="buddhi_hidden" id="chat-iframe-container">
-  <iframe id="chat-iframe" src="https://buddhiai.app/embed/app/${buddiAppId}"></iframe>
+  <iframe id="chat-iframe" src="http://localhost:3000/embed/app/${buddiAppId}"></iframe>
 </div>
 `;
 
@@ -32,7 +32,7 @@
   });
 
   window.onmessage = function (e) {
-    if (e.origin == "https://buddhiai.app" && e.data === "closeBuddhiChat") {
+    if (e.origin == "http://localhost:3000" && e.data === "closeBuddhiChat") {
       chatIcon.innerHTML = messageSvg;
       iframeContainer.classList.remove("buddhi_flex");
       iframeContainer.classList.add("buddhi_hidden");
