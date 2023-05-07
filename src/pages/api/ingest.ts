@@ -24,20 +24,19 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
     [filename: string]: Buffer;
   } = {};
 
-  console.log(req);
   const supabase = createServerSupabaseClient({ req, res });
 
   const {
     data: { session },
   } = await supabase.auth.getSession();
 
-  //   if (!session) {
-  //     return res.status(401).json({
-  //       error: "not_authenticated",
-  //       description:
-  //         "The user does not have an active session or is not authenticated",
-  //     });
-  //   }
+  if (!session) {
+    return res.status(401).json({
+      error: "not_authenticated",
+      description:
+        "The user does not have an active session or is not authenticated",
+    });
+  }
 
   const { fields, files } = await formidablePromise(req, {
     ...formidableConfig,
@@ -93,16 +92,14 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
     const directory = join(
       process.cwd(),
       "HNSWLib",
-      "c803c897-c9d7-463d-93ef-56f525f3ee9c",
+      session?.user?.id,
       fields.filename
     );
-
     await Promise.all(
       result.map((file) => {
         file.save(directory);
       })
     );
-
     return res.status(200).json({ message: "success" });
   } catch (e) {
     console.log(e);
