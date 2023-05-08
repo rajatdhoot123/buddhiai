@@ -59,16 +59,26 @@ const AppProvider = ({ children = null }) => {
   };
 
   useEffect(() => {
+    const getChatAgents = async (userId) => {
+      const { data, error } = await supabaseClient
+        .from("chat_agents")
+        .select()
+        .eq("created_by", userId);
+      return { data, error };
+    };
     if (userId) {
       (async () => {
         setDocsLoading(true);
         try {
-          const { data: availableAgent } = await getAvailableAgents();
+          const [{ data: availableAgent }, { data: chat_agents }] =
+            await Promise.all([getAvailableAgents(), getChatAgents(userId)]);
+
           dispatch({
             type: SET_ALL_DOS,
             payload: availableAgent.data,
           });
         } catch (err) {
+          console.log({ err });
         } finally {
           setDocsLoading(false);
         }

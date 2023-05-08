@@ -1,12 +1,7 @@
-import { useState } from "react";
-import { HiUpload } from "react-icons/hi";
-import { FaRegFilePdf, FaWhatsapp } from "react-icons/fa";
-import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { FaWhatsapp } from "react-icons/fa";
+import { useUser } from "@supabase/auth-helpers-react";
 import { WHATSAPP_SUPPORT_NUMBER } from "../../constant";
-import { trainDocs } from "../../axios";
 import { useApp } from "../../context/AppContext";
-import Loader from "../../components/Loader";
-import toast from "react-hot-toast";
 import UploadForm from "../../components/Form";
 import {
   Dialog,
