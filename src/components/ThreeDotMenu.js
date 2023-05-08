@@ -26,7 +26,7 @@ function ThreeDotMenu({ children }) {
 
       {isOpen && (
         <div
-          className="w-full absolute bottom-10 right-0 z-10 mt-2 rounded-md border border-gray-100 bg-white shadow-lg"
+          className="absolute bottom-10 right-0 z-10 mt-2 rounded-md border border-gray-100 bg-white shadow-lg px-2 w-44"
           role="menu"
         >
           <div className="p-2 space-y-2">
@@ -37,7 +37,7 @@ function ThreeDotMenu({ children }) {
               files.map((file) => (
                 <button
                   key={file.name}
-                  className="text-sm font-medium flex items-center py-2 space-x-2"
+                  className="text-sm font-medium flex items-center py-2 space-x-2 w-40"
                   onClick={() => {
                     handleActiveFile(file.name);
                     setIsOpen(false);
