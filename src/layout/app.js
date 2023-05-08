@@ -31,7 +31,6 @@ const App = ({ children }) => {
     setActiveRoute(router.pathname);
   }, [router.pathname, setActiveRoute]);
 
-  console.log({ activeFile });
   return (
     <div className="grid bg-[#343541] min-h-screen">
       <button

@@ -9,6 +9,7 @@ import { getTextContentFromPDF } from "@/lib/pdf";
 import { chunk } from "@/lib/utils";
 import { join } from "path";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import redis from "@/lib/redis";
 
 const formidableConfig = {
   keepExtensions: true,
@@ -43,6 +44,14 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
     // consume this, otherwise formidable tries to save the file to disk
     fileWriteStreamHandler: (file) => fileConsumer(file, endBuffers),
   });
+
+  if (!fields.prompt) {
+    return res.status(500).json({ message: "Prompt required" });
+  }
+
+  if (!fields.agent_name) {
+    return res.status(500).json({ message: "Agent name required" });
+  }
 
   const docs = await Promise.all(
     Object.values(files).map(async (fileObj: formidable.file) => {
@@ -89,6 +98,7 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
       })
     );
 
+    await redis.set(fields.agent_name, fields.prompt);
     const directory = join(
       process.cwd(),
       "HNSWLib",

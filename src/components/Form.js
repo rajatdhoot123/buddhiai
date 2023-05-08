@@ -105,7 +105,8 @@ const UploadForm = ({ addNewUploadedFile }) => {
       return;
     }
     const data = newFiles.filter(
-      (newFile) => !files.find((prevFile) => newfile.agent_name === prevfile.agent_name)
+      (newFile) =>
+        !files.find((prevFile) => newfile.agent_name === prevfile.agent_name)
     );
     setFile((prev) => [...prev, ...data]);
 
@@ -158,15 +159,16 @@ const UploadForm = ({ addNewUploadedFile }) => {
     }
     const formData = new FormData();
     formData.append("agent_name", agent);
+    formData.append("prompt", state.prompt);
     files.forEach((file) => {
-      formData.append(file.agent_name, file);
+      formData.append(file.name, file);
     });
     try {
       setLoading("Hold on we are training your files");
       const uploadFiles = files.map((file) => {
         return supabaseClient.storage
           .from("buddhi_docs")
-          .upload(`${user.id}/${agent}/${file.agent_name}`, file, {
+          .upload(`${user.id}/${agent}/${file.name}`, file, {
             cacheControl: "3600",
             upsert: true,
           });
