@@ -8,3 +8,6 @@ export const trainBulk = (payload) => axios.post("/api/ingest", payload);
 
 export const checkFileExist = (payload) =>
   axios.post("/api/check_file_exists", payload);
+
+export const getAvailableAgents = (payload) =>
+  axios.post("/api/get-agents", payload);

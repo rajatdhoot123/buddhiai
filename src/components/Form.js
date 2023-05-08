@@ -5,6 +5,8 @@ import { HiUpload, HiOutlineDocumentText } from "react-icons/hi";
 import { checkSpecialCharacter } from "../utils";
 import { toast } from "react-hot-toast";
 import { trainBulk } from "../axios";
+import Loader from "./Loader";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 const ACCEPTED_FILES = ["text/plain", "application/pdf"];
 
 const FilesPreview = ({ files, setFile }) => {
@@ -65,19 +67,20 @@ const FilesPreview = ({ files, setFile }) => {
   );
 };
 
-const UploadForm = () => {
+const UploadForm = ({ addNewUploadedFile }) => {
   const [loading, setLoading] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFile] = useState([]);
   const [agentName, setAgentName] = useState("");
   const fileSize = useRef(0);
-
+  const supabaseClient = useSupabaseClient();
+  const user = useUser();
   const handleSetFiles = (newFiles) => {
     fileSize.current = newFiles.reduce((acc, current) => {
-      return acc + Number(current.size) / (1024 * 1024);
+      return acc + Number(current.size);
     }, fileSize.current);
 
-    if (fileSize.current > 5) {
+    if (fileSize.current / (1024 * 1024) > 5) {
       toast(
         "For free version we support file less than 4mb. Contact us for larger files"
       );
@@ -130,20 +133,36 @@ const UploadForm = () => {
       formData.append(file.name, file);
     });
     try {
-      setLoading("Hold on We are trining files");
-      toast.success("Training Started");
-      const { data } = await trainBulk(formData);
-      toast.success("Files Trained");
+      setLoading("Hold on we are training your files");
+      const uploadFiles = files.map((file) => {
+        return supabaseClient.storage
+          .from("buddhi_docs")
+          .upload(`${user.id}/${agent}/${file.name}`, file, {
+            cacheControl: "3600",
+            upsert: true,
+          });
+      });
+      const data = await Promise.allSettled([
+        trainBulk(formData),
+        ...uploadFiles,
+      ]);
+      const isTraind = data[0];
+      if (isTraind.status === "fulfilled") {
+        toast.success(`${agent} Trained Successfully`);
+      } else {
+        toast.success(`${agent} training failed please try again`);
+      }
       setLoading("");
-      console.log({ data });
     } catch (err) {
       setLoading("");
       console.log(err);
+    } finally {
+      await addNewUploadedFile();
     }
   };
 
   return (
-    <Form.Root onSubmit={handleSubmit} className="w-[460px]">
+    <Form.Root onSubmit={handleSubmit} className="w-full md:w-1/2 m-auto p-5">
       <Form.Field className="grid mb-[10px]" name="file_name">
         <div className="flex items-baseline justify-between">
           <Form.Label className="text-[15px] font-medium leading-[35px] text-white">
@@ -206,9 +225,14 @@ const UploadForm = () => {
           disabled={loading}
           onClick={handleSubmit}
           type="submit"
-          className="box-border w-full text-violet11 shadow-blackA7 hover:bg-mauve3 inline-flex h-[35px] items-center justify-center rounded-[4px] bg-white px-[15px] font-medium leading-none shadow-[0_2px_10px] focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none mt-[10px]"
+          className="box-border w-full text-violet11 shadow-blackA7 hover:bg-mauve3 inline-flex h-[35px] items-center justify-center rounded-[4px] bg-indigo-400 px-[15px] font-medium leading-none shadow-[0_2px_10px] focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none mt-[10px]"
         >
-          Train
+          {loading && (
+            <span>
+              <Loader />
+            </span>
+          )}
+          <span className="text-white">{loading || "Create Agent"}</span>
         </button>
       </Form.Submit>
     </Form.Root>

@@ -34,22 +34,20 @@ const App = () => {
         !activeFile && (
           <div className="h-full w-full flex-col flex items-center justify-center">
             <div className="text-white font-medium text-3xl my-5 text-center">
-              Select doc and start talking to your agent{" "}
+              Select doc and start talking to your agent
             </div>
             <div className="w-full flex flex-col items-center space-y-3">
-              {files.map((file) =>
-                file.is_available ? (
-                  <button
-                    onClick={() => {
-                      handleActiveFile(file.id);
-                    }}
-                    key={file.id}
-                    className="text-white border-white border-opacity-50 border rounded-md w-1/2 py-3"
-                  >
-                    {file.name}
-                  </button>
-                ) : null
-              )}
+              {files.map((file) => (
+                <button
+                  onClick={() => {
+                    handleActiveFile(file.id);
+                  }}
+                  key={file.id}
+                  className="text-white border-white border-opacity-50 border rounded-md w-1/2 py-3"
+                >
+                  {file.name}
+                </button>
+              ))}
             </div>
           </div>
         )
