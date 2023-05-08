@@ -158,7 +158,23 @@ const UploadForm = ({ addNewUploadedFile }) => {
         trainBulk(formData),
         ...uploadFiles,
       ]);
-      const isTraind = data[0];
+      const [isTraind, ...uploadedFiles] = data;
+
+      const filesToInsertInTable = uploadedFiles.map((file) => {
+        if (file.status === "fulfilled") {
+          return file?.value?.data?.path;
+        }
+        return "";
+      });
+      await supabaseClient
+        .from("chat_agents")
+        .insert({
+          created_by: user?.id,
+          agent_type: state.agentType,
+          agent_name: state.agentName,
+          files: filesToInsertInTable,
+        })
+        .select();
       if (isTraind.status === "fulfilled") {
         toast.success(`${agent} Trained Successfully`);
       } else {
