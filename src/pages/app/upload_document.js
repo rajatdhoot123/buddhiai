@@ -7,7 +7,7 @@ import { trainDocs } from "../../axios";
 import { useApp } from "../../context/AppContext";
 import Loader from "../../components/Loader";
 import toast from "react-hot-toast";
-import FormDemo from "../../components/Form";
+import UploadForm from "../../components/Form";
 import {
   Dialog,
   DialogContent,
@@ -85,37 +85,10 @@ const UploadedFiles = ({ file, handleTrainFile, userId }) => {
 };
 
 function UploadDropzone() {
-  const [isLoading, setIsLoading] = useState("");
-  const [isDragging, setIsDragging] = useState(false);
-  const [file, setFile] = useState(null);
-
   const { files = [], addNewUploadedFile, updateFiles } = useApp();
 
   const supabaseClient = useSupabaseClient();
   const user = useUser();
-  const handleDragEnter = (event) => {
-    event.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = () => {
-    setIsDragging(false);
-  };
-
-  const handleDragOver = (event) => {
-    event.preventDefault();
-  };
-
-  const handleDrop = (event) => {
-    event.preventDefault();
-    setIsDragging(false);
-    const files = Array.from(event.dataTransfer.files);
-    setFile(files[0]);
-  };
-
-  const handleRemoveFile = () => {
-    setFile(null);
-  };
 
   const handleTrainFile = async (file) => {
     try {
@@ -133,36 +106,9 @@ function UploadDropzone() {
     }
   };
 
-  const handleFileUpload = async () => {
-    try {
-      const size = (file.size / (1024 * 1024)).toFixed(2);
-      if (size > 4) {
-        toast(
-          "For free version we support file less than 4mb. Contact us for larger files"
-        );
-        return;
-      }
-      toast("Uploading Started");
-      setIsLoading("Uploading File Please wait");
-      const { data } = await supabaseClient.storage
-        .from("buddhi_docs")
-        .upload(`${user.id}/${file.name}`, file, {
-          cacheControl: "3600",
-          upsert: false,
-        });
-      if (data?.path) {
-        await handleTrainFile(file);
-      }
-    } catch (err) {
-      toast.error(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
     <div className="m-12">
-      <FormDemo />
+      <UploadForm />
       <div className="w-full h-0.5 bg-white my-12"></div>
       <ul className="space-y-5">
         {files.map((file) => (

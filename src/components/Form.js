@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import * as Form from "@radix-ui/react-form";
 import { FaRegFilePdf } from "react-icons/fa";
 import { HiUpload, HiOutlineDocumentText } from "react-icons/hi";
@@ -65,17 +65,27 @@ const FilesPreview = ({ files, setFile }) => {
   );
 };
 
-const FormDemo = () => {
+const UploadForm = () => {
   const [loading, setLoading] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFile] = useState([]);
   const [agentName, setAgentName] = useState("");
+  const fileSize = useRef(0);
 
   const handleSetFiles = (newFiles) => {
+    fileSize.current = newFiles.reduce((acc, current) => {
+      return acc + Number(current.size) / (1024 * 1024);
+    }, fileSize.current);
+
+    if (fileSize.current > 5) {
+      toast(
+        "For free version we support file less than 4mb. Contact us for larger files"
+      );
+      return;
+    }
     const data = newFiles.filter(
       (newFile) => !files.find((prevFile) => newFile.name === prevFile.name)
     );
-
     setFile((prev) => [...prev, ...data]);
   };
 
@@ -93,7 +103,6 @@ const FormDemo = () => {
   };
 
   const handleDrop = (event) => {
-    console.log("dfdsfs");
     event.preventDefault();
     setIsDragging(false);
     const files = Array.from(event.dataTransfer.files);
@@ -206,4 +215,4 @@ const FormDemo = () => {
   );
 };
 
-export default FormDemo;
+export default UploadForm;
