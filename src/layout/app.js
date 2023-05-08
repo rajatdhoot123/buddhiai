@@ -82,10 +82,10 @@ const App = ({ children }) => {
           </div>
           <div>
             <div className="h-0.5 bg-white bg-opacity-25 mb-5" />
-            <ul className="space-y-4 m-5">
+            <ul className="space-y-4 my-5">
               <li>
                 <ThreeDotMenu>
-                  <div className="flex items-center">
+                  <div className="flex items-center px-5">
                     <HiOutlineDocumentDuplicate />
                     <div className="ml-2 truncate">
                       {activeFile?.name ?? "Select Doc"}
@@ -93,7 +93,7 @@ const App = ({ children }) => {
                   </div>
                 </ThreeDotMenu>
               </li>
-              <li className="text-white flex items-center">
+              <li className="text-white flex items-center px-5">
                 <FaSignOutAlt className="text-white" />
                 <button
                   className="ml-2"
