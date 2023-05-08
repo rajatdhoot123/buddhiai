@@ -93,7 +93,7 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
       process.cwd(),
       "HNSWLib",
       session?.user?.id,
-      fields.filename
+      fields.agent_name
     );
     await Promise.all(
       result.map((file) => {
