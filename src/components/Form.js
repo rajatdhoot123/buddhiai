@@ -13,10 +13,14 @@ import { FaRegFilePdf } from "react-icons/fa";
 import { HiUpload, HiOutlineDocumentText } from "react-icons/hi";
 import { checkSpecialCharacter } from "../utils";
 import { toast } from "react-hot-toast";
-import { trainBulk } from "../axios";
+import { trainBulk, readExcel } from "../axios";
 import Loader from "./Loader";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-const ACCEPTED_FILES = ["text/plain", "application/pdf"];
+const ACCEPTED_FILES = [
+  "text/plain",
+  "application/pdf",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+];
 
 const FilesPreview = ({ files, setFile }) => {
   const handleRemoveFile = (index) => {
@@ -87,7 +91,7 @@ const UploadForm = ({ addNewUploadedFile }) => {
   const fileSize = useRef(0);
   const supabaseClient = useSupabaseClient();
   const user = useUser();
-  const handleSetFiles = (newFiles) => {
+  const handleSetFiles = async (newFiles) => {
     fileSize.current = newFiles.reduce((acc, current) => {
       return acc + Number(current.size);
     }, fileSize.current);
@@ -102,6 +106,17 @@ const UploadForm = ({ addNewUploadedFile }) => {
       (newFile) => !files.find((prevFile) => newFile.name === prevFile.name)
     );
     setFile((prev) => [...prev, ...data]);
+
+    try {
+      const formData = new FormData();
+      data.forEach((file) => {
+        formData.append(file.name, file);
+      });
+      const { data: fileData } = await readExcel(formData);
+      console.log(fileData);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleDragEnter = (event) => {
@@ -216,7 +231,12 @@ const UploadForm = ({ addNewUploadedFile }) => {
           </Form.Label>
         </div>
         <Form.Control asChild>
-          <Select value={state.agentType} onValueChange={(e) => console.log(e)}>
+          <Select
+            value={state.agentType}
+            onValueChange={(e) =>
+              setState((prev) => ({ ...prev, agentType: e }))
+            }
+          >
             <SelectTrigger className="bg-white">
               <SelectValue placeholder="Select Agent Type" />
             </SelectTrigger>
@@ -224,9 +244,7 @@ const UploadForm = ({ addNewUploadedFile }) => {
               <SelectGroup>
                 <SelectLabel>Select Agent</SelectLabel>
                 <SelectItem value="super_agent">Super Agent</SelectItem>
-                <SelectItem value="shopping_agent">
-                  Shopping Assitant
-                </SelectItem>
+                <SelectItem value="shopping_agent">Shopping Agent</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -272,6 +290,26 @@ const UploadForm = ({ addNewUploadedFile }) => {
             />
           </Form.Control>
         </div>
+      </Form.Field>
+      <Form.Field className="grid mb-[10px]" name="question">
+        <div className="flex items-baseline justify-between">
+          <Form.Label className="text-[15px] font-medium leading-[35px] text-white">
+            Prompt
+          </Form.Label>
+          <Form.Message
+            className="text-[13px] text-white opacity-[0.8]"
+            match="valueMissing"
+          >
+            Please enter a question
+          </Form.Message>
+        </div>
+        <Form.Control asChild>
+          <textarea
+            rows={5}
+            className="box-border w-full bg-blackA5 shadow-blackA9 inline-flex appearance-none items-center justify-center rounded-[4px] p-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none hover:shadow-[0_0_0_1px_black] focus:shadow-[0_0_0_2px_black] selection:color-white selection:bg-blackA9 resize-none"
+            required
+          />
+        </Form.Control>
       </Form.Field>
       <Form.Submit asChild>
         <button

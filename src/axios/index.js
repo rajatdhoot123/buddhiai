@@ -11,3 +11,5 @@ export const checkFileExist = (payload) =>
 
 export const getAvailableAgents = (payload) =>
   axios.post("/api/get-agents", payload);
+
+export const readExcel = (payload) => axios.post("/api/read-excel", payload);
