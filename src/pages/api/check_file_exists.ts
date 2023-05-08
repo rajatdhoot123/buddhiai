@@ -28,7 +28,7 @@ export default async function handler(
     });
   }
   const checkFile = files.map((file) =>
-    checkFileExist(join(process.cwd(), "HNSWLib", session.user.id, file.name))
+    checkFileExist(join(process.cwd(), "HNSWLib", session.user.id, file.agent_name))
   );
   const response = await Promise.all(checkFile);
   return res.status(200).json({

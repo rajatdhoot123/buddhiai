@@ -10,8 +10,14 @@ export const EmbedHeader = ({ onRefresh }) => {
     <div className="text-white flex justify-between p-5">
       <span>BuddhiAI</span>
       <div className="flex space-x-5">
-        <HiOutlineRefresh  onClick={onRefresh} className="h-6 w-6 cursor-pointer" />
-        <AiOutlineClose onClick={handleClose} className="h-6 w-6 cursor-pointer" />
+        <HiOutlineRefresh
+          onClick={onRefresh}
+          className="h-6 w-6 cursor-pointer"
+        />
+        <AiOutlineClose
+          onClick={handleClose}
+          className="h-6 w-6 cursor-pointer"
+        />
       </div>
     </div>
   );

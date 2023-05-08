@@ -31,6 +31,7 @@ const App = ({ children }) => {
     setActiveRoute(router.pathname);
   }, [router.pathname, setActiveRoute]);
 
+  console.log({ activeFile });
   return (
     <div className="grid bg-[#343541] min-h-screen">
       <button
@@ -88,7 +89,7 @@ const App = ({ children }) => {
                   <div className="flex items-center px-5">
                     <HiOutlineDocumentDuplicate />
                     <div className="ml-2 truncate">
-                      {activeFile?.name ?? "Select Doc"}
+                      {activeFile?.agent_name ?? "Select Doc"}
                     </div>
                   </div>
                 </ThreeDotMenu>

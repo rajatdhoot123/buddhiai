@@ -16,9 +16,9 @@ const UploadedFiles = ({ file, userId }) => {
   return (
     <li
       className="text-white border border-white border-opacity-60 rounded-md p-2"
-      key={file.name}
+      key={file.agent_name}
     >
-      <div className="truncate font-bold text-center">{file.name}</div>
+      <div className="truncate font-bold text-center">{file.agent_name}</div>
       <Dialog>
         <DialogTrigger className="bg-indigo-400 text-white text-sm font-bold px-2 rounded-md flex items-center w-full p-1 mt-2 text-center justify-center">
           Embed
@@ -33,7 +33,7 @@ const UploadedFiles = ({ file, userId }) => {
                 className="focus:outline-none w-full bg-transparent"
                 value={`<script \nbuddhi_api_id="${
                   typeof window !== "undefined" &&
-                  window.btoa(JSON.stringify({ filename: file.name, userId }))
+                  window.btoa(JSON.stringify({ filename: file.agent_name, userId }))
                 }" \nsrc="https://www.buddhiai.app/buddi_widget/min-buddhi.js" async>\n</script>`}
               />
             </DialogDescription>
@@ -77,7 +77,7 @@ function UploadDropzone() {
         </div>
         <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
           {files.map((file) => (
-            <UploadedFiles userId={user?.id} key={file.name} file={file} />
+            <UploadedFiles userId={user?.id} key={file.agent_name} file={file} />
           ))}
         </ul>
       </div>

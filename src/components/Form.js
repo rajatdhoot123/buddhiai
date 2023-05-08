@@ -9,6 +9,7 @@ import {
   SelectItem,
   SelectLabel,
 } from "../../components/ui";
+import { QA_PROMPT_MAPPER } from "../constant/prompt";
 import { FaRegFilePdf } from "react-icons/fa";
 import { HiUpload, HiOutlineDocumentText } from "react-icons/hi";
 import { checkSpecialCharacter } from "../utils";
@@ -30,7 +31,7 @@ const FilesPreview = ({ files, setFile }) => {
     <div className="flex space-x-2 flex-wrap">
       {files.map((file, index) => {
         return (
-          <div key={file.name}>
+          <div key={file.agent_name}>
             <div className="relative inline-block">
               <a
                 className="m-auto"
@@ -44,7 +45,7 @@ const FilesPreview = ({ files, setFile }) => {
                         <>
                           <FaRegFilePdf className="w-12 h-12 inline-block" />
                           <div className="text-xs my-1 truncate w-12">
-                            {file.name}
+                            {file.agent_name}
                           </div>
                         </>
                       );
@@ -53,7 +54,7 @@ const FilesPreview = ({ files, setFile }) => {
                         <>
                           <HiOutlineDocumentText className="w-12 h-12 inline-block" />
                           <div className="text-xs my-1 truncate w-12">
-                            {file.name}
+                            {file.agent_name}
                           </div>
                         </>
                       );
@@ -84,6 +85,7 @@ const UploadForm = ({ addNewUploadedFile }) => {
   const [state, setState] = useState({
     agentName: "",
     agentType: "super_agent",
+    prompt: QA_PROMPT_MAPPER.super_agent,
   });
   const [loading, setLoading] = useState("");
   const [isDragging, setIsDragging] = useState(false);
@@ -103,14 +105,14 @@ const UploadForm = ({ addNewUploadedFile }) => {
       return;
     }
     const data = newFiles.filter(
-      (newFile) => !files.find((prevFile) => newFile.name === prevFile.name)
+      (newFile) => !files.find((prevFile) => newfile.agent_name === prevfile.agent_name)
     );
     setFile((prev) => [...prev, ...data]);
 
     try {
       const formData = new FormData();
       data.forEach((file) => {
-        formData.append(file.name, file);
+        formData.append(file.agent_name, file);
       });
       const { data: fileData } = await readExcel(formData);
       console.log(fileData);
@@ -157,14 +159,14 @@ const UploadForm = ({ addNewUploadedFile }) => {
     const formData = new FormData();
     formData.append("agent_name", agent);
     files.forEach((file) => {
-      formData.append(file.name, file);
+      formData.append(file.agent_name, file);
     });
     try {
       setLoading("Hold on we are training your files");
       const uploadFiles = files.map((file) => {
         return supabaseClient.storage
           .from("buddhi_docs")
-          .upload(`${user.id}/${agent}/${file.name}`, file, {
+          .upload(`${user.id}/${agent}/${file.agent_name}`, file, {
             cacheControl: "3600",
             upsert: true,
           });
@@ -185,6 +187,7 @@ const UploadForm = ({ addNewUploadedFile }) => {
         .from("chat_agents")
         .insert({
           created_by: user?.id,
+          prompt: state.prompt,
           agent_type: state.agentType,
           agent_name: state.agentName,
           files: filesToInsertInTable,
@@ -234,7 +237,11 @@ const UploadForm = ({ addNewUploadedFile }) => {
           <Select
             value={state.agentType}
             onValueChange={(e) =>
-              setState((prev) => ({ ...prev, agentType: e }))
+              setState((prev) => ({
+                ...prev,
+                agentType: e,
+                prompt: QA_PROMPT_MAPPER[e],
+              }))
             }
           >
             <SelectTrigger className="bg-white">
@@ -296,15 +303,13 @@ const UploadForm = ({ addNewUploadedFile }) => {
           <Form.Label className="text-[15px] font-medium leading-[35px] text-white">
             Prompt
           </Form.Label>
-          <Form.Message
-            className="text-[13px] text-white opacity-[0.8]"
-            match="valueMissing"
-          >
-            Please enter a question
-          </Form.Message>
         </div>
         <Form.Control asChild>
           <textarea
+            value={state.prompt}
+            onChange={(e) =>
+              setState((prev) => ({ ...prev, prompt: e.target.value }))
+            }
             rows={5}
             className="box-border w-full bg-blackA5 shadow-blackA9 inline-flex appearance-none items-center justify-center rounded-[4px] p-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none hover:shadow-[0_0_0_1px_black] focus:shadow-[0_0_0_2px_black] selection:color-white selection:bg-blackA9 resize-none"
             required

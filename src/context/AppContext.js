@@ -12,16 +12,20 @@ const AppContext = createContext();
 
 const SET_ALL_DOS = "set_all_docs";
 const SET_FILE_ACTIVE = "set_file_active";
+const SET_CHAT_AGENTS = "set_chat_agents";
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case SET_CHAT_AGENTS:
+      return { ...state, chat_agents: action.payload };
     case SET_ALL_DOS:
       return { ...state, files: action.payload || [] };
     case SET_FILE_ACTIVE:
       return {
         ...state,
         activeFile:
-          state.files.find((file) => file.name === action.payload) || null,
+          state.files.find((file) => file.agent_name === action.payload) ||
+          null,
       };
     default:
       return state;
@@ -32,7 +36,9 @@ const AppProvider = ({ children = null }) => {
   const [state, dispatch] = useReducer(reducer, {
     files: [],
     activeFile: null,
+    chatAgents: [],
   });
+
   const [docsLoading, setDocsLoading] = useState(false);
   const supabaseClient = useSupabaseClient();
   const user = useUser();
@@ -73,6 +79,7 @@ const AppProvider = ({ children = null }) => {
           const [{ data: availableAgent }, { data: chat_agents }] =
             await Promise.all([getAvailableAgents(), getChatAgents(userId)]);
 
+          dispatch({ type: SET_CHAT_AGENTS, payload: chat_agents });
           dispatch({
             type: SET_ALL_DOS,
             payload: availableAgent.data,

@@ -91,29 +91,29 @@ function App({ Component, pageProps }) {
         supabaseClient={supabaseClient}
         initialSession={pageProps.initialSession}
       >
-        <main className={inter.className}>
-          {router.pathname.startsWith("/app") ? (
-            <>
-              <AppProvider>
+        <AppProvider>
+          <main className={inter.className}>
+            {router.pathname.startsWith("/app") ? (
+              <>
                 <AppLayout>
                   <Component {...pageProps} />
                 </AppLayout>
-              </AppProvider>
-            </>
-          ) : (
-            <>
-              {!router.pathname.startsWith("/embed") && (
-                <Script
-                  initial_message="Hello you can ask me what is buddhi ai"
-                  buddhi_api_id="eyJmaWxlbmFtZSI6IkJ1ZGRoaV9BSV9Ld2lrdHdpay5wZGYiLCJ1c2VySWQiOiJjODAzYzg5Ny1jOWQ3LTQ2M2QtOTNlZi01NmY1MjVmM2VlOWMifQ=="
-                  src="https://www.buddhiai.app/buddi_widget/min-buddhi.js"
-                  async
-                ></Script>
-              )}
-              <Component {...pageProps} />
-            </>
-          )}
-        </main>
+              </>
+            ) : (
+              <>
+                {!router.pathname.startsWith("/embed") && (
+                  <Script
+                    initial_message="Hello you can ask me what is buddhi ai"
+                    buddhi_api_id="eyJmaWxlbmFtZSI6IkJ1ZGRoaV9BSV9Ld2lrdHdpay5wZGYiLCJ1c2VySWQiOiJjODAzYzg5Ny1jOWQ3LTQ2M2QtOTNlZi01NmY1MjVmM2VlOWMifQ=="
+                    src="https://www.buddhiai.app/buddi_widget/min-buddhi.js"
+                    async
+                  ></Script>
+                )}
+                <Component {...pageProps} />
+              </>
+            )}
+          </main>
+        </AppProvider>
       </SessionContextProvider>
       <Toaster />
     </>

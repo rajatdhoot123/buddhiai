@@ -36,15 +36,15 @@ function ThreeDotMenu({ children }) {
             ) : (
               files.map((file) => (
                 <button
-                  key={file.name}
+                  key={file.agent_name}
                   className="text-sm font-medium flex items-center py-2 space-x-2 w-40"
                   onClick={() => {
-                    handleActiveFile(file.name);
+                    handleActiveFile(file.agent_name);
                     setIsOpen(false);
                   }}
                 >
-                  {activeFile?.name === file.name && <FcCheckmark />}
-                  <span className="truncate">{file.name}</span>
+                  {activeFile?.agent_name === file.agent_name && <FcCheckmark />}
+                  <span className="truncate">{file.agent_name}</span>
                 </button>
               ))
             )}
