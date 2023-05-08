@@ -1,5 +1,14 @@
 import React, { useState, useRef } from "react";
 import * as Form from "@radix-ui/react-form";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+} from "../../components/ui";
 import { FaRegFilePdf } from "react-icons/fa";
 import { HiUpload, HiOutlineDocumentText } from "react-icons/hi";
 import { checkSpecialCharacter } from "../utils";
@@ -68,10 +77,13 @@ const FilesPreview = ({ files, setFile }) => {
 };
 
 const UploadForm = ({ addNewUploadedFile }) => {
+  const [state, setState] = useState({
+    agentName: "",
+    agentType: "super_agent",
+  });
   const [loading, setLoading] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFile] = useState([]);
-  const [agentName, setAgentName] = useState("");
   const fileSize = useRef(0);
   const supabaseClient = useSupabaseClient();
   const user = useUser();
@@ -117,7 +129,7 @@ const UploadForm = ({ addNewUploadedFile }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const agent = agentName.trim();
+    const agent = state.agentName.trim();
     if (!agent) {
       return toast.error("Agent name required");
     }
@@ -171,12 +183,37 @@ const UploadForm = ({ addNewUploadedFile }) => {
         </div>
         <Form.Control asChild>
           <input
-            onChange={(e) => setAgentName(e.target.value)}
-            value={agentName}
+            onChange={(e) =>
+              setState((prev) => ({ ...prev, agentName: e.target.value }))
+            }
+            value={state.agentName}
             className="box-border w-full bg-blackA5 shadow-blackA9 inline-flex h-[35px] appearance-none items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none hover:shadow-[0_0_0_1px_black] focus:shadow-[0_0_0_2px_black] selection:color-white selection:bg-blackA9"
             type="text"
             required
           />
+        </Form.Control>
+      </Form.Field>
+      <Form.Field className="grid mb-[10px]" name="file_name">
+        <div className="flex items-baseline justify-between">
+          <Form.Label className="text-[15px] font-medium leading-[35px] text-white">
+            Select Agent Type
+          </Form.Label>
+        </div>
+        <Form.Control asChild>
+          <Select value={state.agentType} onValueChange={(e) => console.log(e)}>
+            <SelectTrigger className="bg-white">
+              <SelectValue placeholder="Select Agent Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Select Agent</SelectLabel>
+                <SelectItem value="super_agent">Super Agent</SelectItem>
+                <SelectItem value="shopping_agent">
+                  Shopping Assitant
+                </SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </Form.Control>
       </Form.Field>
       <Form.Field

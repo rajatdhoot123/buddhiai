@@ -56,7 +56,8 @@ function UploadDropzone() {
 
   return (
     <div className="m-12 grid grid-cols-1 place-content-center">
-      {files.length >= 5 ? (
+      {files.length >= 5 &&
+      user?.id !== "c803c897-c9d7-463d-93ef-56f525f3ee9c" ? (
         <div>
           <div className="text-center text-3xl text-white">
             Currently In free version we are allowing 5 files to train
