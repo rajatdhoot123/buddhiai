@@ -66,6 +66,7 @@ const FilesPreview = ({ files, setFile }) => {
 };
 
 const FormDemo = () => {
+  const [loading, setLoading] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFile] = useState([]);
   const [agentName, setAgentName] = useState("");
@@ -120,9 +121,14 @@ const FormDemo = () => {
       formData.append(file.name, file);
     });
     try {
+      setLoading("Hold on We are trining files");
+      toast.success("Training Started");
       const { data } = await trainBulk(formData);
+      toast.success("Files Trained");
+      setLoading("");
       console.log({ data });
     } catch (err) {
+      setLoading("");
       console.log(err);
     }
   };
@@ -188,6 +194,7 @@ const FormDemo = () => {
       </Form.Field>
       <Form.Submit asChild>
         <button
+          disabled={loading}
           onClick={handleSubmit}
           type="submit"
           className="box-border w-full text-violet11 shadow-blackA7 hover:bg-mauve3 inline-flex h-[35px] items-center justify-center rounded-[4px] bg-white px-[15px] font-medium leading-none shadow-[0_2px_10px] focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none mt-[10px]"

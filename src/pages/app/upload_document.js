@@ -160,7 +160,6 @@ function UploadDropzone() {
     }
   };
 
-  const disabledUpload = isLoading || !file;
   return (
     <div className="m-12">
       <FormDemo />
