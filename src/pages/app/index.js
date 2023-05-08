@@ -16,7 +16,7 @@ const App = () => {
   }
   return (
     <div className="flex flex-col justify-between h-full gap-5">
-      {!files.filter(({ is_available }) => is_available).length ? (
+      {!files.length ? (
         <div className="h-full w-full flex-col flex items-center justify-center">
           <Link
             href="/app/upload_document"
@@ -40,9 +40,9 @@ const App = () => {
               {files.map((file) => (
                 <button
                   onClick={() => {
-                    handleActiveFile(file.id);
+                    handleActiveFile(file.name);
                   }}
-                  key={file.id}
+                  key={file.name}
                   className="text-white border-white border-opacity-50 border rounded-md w-1/2 py-3"
                 >
                   {file.name}

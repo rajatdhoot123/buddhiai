@@ -21,7 +21,7 @@ const UploadedFiles = ({ file, userId }) => {
   return (
     <li
       className="text-white border border-white border-opacity-60 rounded-md p-2"
-      key={file.id}
+      key={file.name}
     >
       <div className="truncate font-bold text-center">{file.name}</div>
       <Dialog>
@@ -50,13 +50,31 @@ const UploadedFiles = ({ file, userId }) => {
 };
 
 function UploadDropzone() {
-  const { files = [], addNewUploadedFile, updateFiles } = useApp();
+  const { files = [], addNewUploadedFile } = useApp();
 
   const user = useUser();
 
   return (
     <div className="m-12 grid grid-cols-1 place-content-center">
-      <UploadForm addNewUploadedFile={addNewUploadedFile} />
+      {files.length >= 5 ? (
+        <div>
+          <div className="text-center text-3xl text-white">
+            Currently In free version we are allowing 5 files to train
+          </div>
+          <div className="bg-green-500 w-full rounded-md p-2 mt-5">
+            <a
+              className="flex items-center justify-center text-xl"
+              target="_blank"
+              href={`https://api.whatsapp.com/send?phone=${WHATSAPP_SUPPORT_NUMBER}&text=hello`}
+            >
+              <FaWhatsapp className="text-white" />
+              <span className="text-white font-bold ml-2">Contact Us </span>
+            </a>
+          </div>
+        </div>
+      ) : (
+        <UploadForm addNewUploadedFile={addNewUploadedFile} />
+      )}
       <div className="p-5">
         <div className="text-3xl text-center font-semibold text-white my-5">
           Available Agents
