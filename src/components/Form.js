@@ -81,7 +81,7 @@ const FilesPreview = ({ files, setFile }) => {
   );
 };
 
-const UploadForm = ({ addNewUploadedFile }) => {
+const UploadForm = ({ addNewUploadedFile, agents }) => {
   const [state, setState] = useState({
     agentName: "",
     agentType: "super_agent",
@@ -148,6 +148,14 @@ const UploadForm = ({ addNewUploadedFile }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const agent = state.agentName.trim();
+
+    const isAgentPresent = agents.find((a) => a.agent_name === agent);
+
+    if (isAgentPresent) {
+      return toast.error(
+        `Agent already existed with name ${isAgentPresent.agent_name}`
+      );
+    }
     if (!agent) {
       return toast.error("Agent name required");
     }

@@ -4,6 +4,7 @@ import { makeChain } from "../../../../utils/makechain";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { HNSWLib } from "langchain/vectorstores/hnswlib";
 import { join } from "path";
+import redis from "@/lib/redis";
 
 export default async function handler(
   req: NextApiRequest,
@@ -46,13 +47,14 @@ export default async function handler(
   const sanitizedQuestion = question.trim().replaceAll("\n", " ");
 
   try {
+    const custom_prompt: string = await redis.get(filename);
     /* create vectorstore*/
     const directory = join(process.cwd(), "HNSWLib", session.user.id, filename);
 
     const vectorStore = await HNSWLib.load(directory, new OpenAIEmbeddings());
 
     //create chain
-    const chain = makeChain(vectorStore);
+    const chain = makeChain(vectorStore, custom_prompt);
     //Ask a question using chat history
     const response = await chain.call({
       question: sanitizedQuestion,

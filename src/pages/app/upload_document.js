@@ -69,7 +69,7 @@ function UploadDropzone() {
           </div>
         </div>
       ) : (
-        <UploadForm addNewUploadedFile={addNewUploadedFile} />
+        <UploadForm agents={files} addNewUploadedFile={addNewUploadedFile} />
       )}
       <div className="p-5">
         <div className="text-3xl text-center font-semibold text-white my-5">
