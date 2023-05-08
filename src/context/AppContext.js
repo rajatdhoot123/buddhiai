@@ -6,7 +6,7 @@ import {
   useState,
 } from "react";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import { checkFileExist } from "../axios";
+import { getAvailableAgents } from "../axios";
 
 const AppContext = createContext();
 
@@ -21,7 +21,7 @@ const reducer = (state, action) => {
       return {
         ...state,
         activeFile:
-          state.files.find((file) => file.id === action.payload) || null,
+          state.files.find((file) => file.name === action.payload) || null,
       };
     default:
       return state;
@@ -43,21 +43,12 @@ const AppProvider = ({ children = null }) => {
   };
 
   const addNewUploadedFile = async () => {
-    const { data } = await supabaseClient.storage
-      .from("buddhi_docs")
-      .list(userId, {
-        limit: 100,
-        offset: 0,
-        sortBy: { column: "name", order: "asc" },
-      });
-    const files = data.filter(({ name }) => name !== ".emptyFolderPlaceholder");
-    const { data: isFileAvailable } = await checkFileExist({ files });
-
+    const { data: availableAgent } = await getAvailableAgents();
     dispatch({
       type: SET_ALL_DOS,
-      payload: isFileAvailable.data,
+      payload: availableAgent.data,
     });
-    return isFileAvailable.data;
+    return availableAgent.data;
   };
 
   const updateFiles = (files) => {
@@ -72,21 +63,10 @@ const AppProvider = ({ children = null }) => {
       (async () => {
         setDocsLoading(true);
         try {
-          const { data } = await supabaseClient.storage
-            .from("buddhi_docs")
-            .list(userId, {
-              limit: 100,
-              offset: 0,
-              sortBy: { column: "name", order: "asc" },
-            });
-          const files = data.filter(
-            ({ name }) => name !== ".emptyFolderPlaceholder"
-          );
-
-          const { data: isFileAvailable } = await checkFileExist({ files });
+          const { data: availableAgent } = await getAvailableAgents();
           dispatch({
             type: SET_ALL_DOS,
-            payload: isFileAvailable.data,
+            payload: availableAgent.data,
           });
         } catch (err) {
         } finally {

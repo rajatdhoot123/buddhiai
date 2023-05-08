@@ -13,7 +13,6 @@ function ThreeDotMenu({ children }) {
   });
   const { files = [], handleActiveFile, activeFile } = useApp();
 
-  const availableFiles = files.filter((file) => file.is_available);
   return (
     <div ref={dropdownRef} className="relative">
       <div className="inline-flex items-center overflow-hidden rounded-md w-full">
@@ -32,20 +31,20 @@ function ThreeDotMenu({ children }) {
         >
           <div className="p-2 space-y-2">
             <small className="font-semibold">Select File</small>
-            {!availableFiles.length ? (
+            {!files.length ? (
               <div>No files</div>
             ) : (
-              availableFiles.map((file) => (
+              files.map((file) => (
                 <button
-                  key={file.id}
+                  key={file.name}
                   className="text-sm font-medium flex items-center py-2 space-x-2"
                   onClick={() => {
-                    handleActiveFile(file.id);
+                    handleActiveFile(file.name);
                     setIsOpen(false);
                   }}
                 >
-                  {activeFile?.id === file.id && <FcCheckmark />}
-                  <span>{file.name}</span>
+                  {activeFile?.name === file.name && <FcCheckmark />}
+                  <span className="truncate">{file.name}</span>
                 </button>
               ))
             )}
