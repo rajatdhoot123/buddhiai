@@ -10,18 +10,19 @@ import {
   SelectLabel,
 } from "../../components/ui";
 import { QA_PROMPT_MAPPER } from "../constant/prompt";
-import { FaRegFilePdf } from "react-icons/fa";
+import { FaRegFilePdf, FaRegFileExcel } from "react-icons/fa";
 import { HiUpload, HiOutlineDocumentText } from "react-icons/hi";
 import { checkSpecialCharacter } from "../utils";
 import { toast } from "react-hot-toast";
 import { trainBulk, readExcel } from "../axios";
 import Loader from "./Loader";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-const ACCEPTED_FILES = [
-  "text/plain",
-  "application/pdf",
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-];
+
+const EXCEL_FORMAT =
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+const CSV = "text/csv";
+const TEXT_FILE = "text/plain";
+const ACCEPTED_FILES = [TEXT_FILE, "application/pdf", EXCEL_FORMAT, CSV];
 
 const FilesPreview = ({ files, setFile }) => {
   const handleRemoveFile = (index) => {
@@ -31,7 +32,7 @@ const FilesPreview = ({ files, setFile }) => {
     <div className="flex space-x-2 flex-wrap">
       {files.map((file, index) => {
         return (
-          <div key={file.agent_name}>
+          <div key={file.name}>
             <div className="relative inline-block">
               <a
                 className="m-auto"
@@ -45,16 +46,26 @@ const FilesPreview = ({ files, setFile }) => {
                         <>
                           <FaRegFilePdf className="w-12 h-12 inline-block" />
                           <div className="text-xs my-1 truncate w-12">
-                            {file.agent_name}
+                            {file.name}
                           </div>
                         </>
                       );
-                    case "text/plain":
+                    case TEXT_FILE:
                       return (
                         <>
                           <HiOutlineDocumentText className="w-12 h-12 inline-block" />
                           <div className="text-xs my-1 truncate w-12">
-                            {file.agent_name}
+                            {file.name}
+                          </div>
+                        </>
+                      );
+                    case EXCEL_FORMAT:
+                    case CSV:
+                      return (
+                        <>
+                          <FaRegFileExcel className="w-12 h-12 inline-block" />
+                          <div className="text-xs my-1 truncate w-12">
+                            {file.name}
                           </div>
                         </>
                       );
@@ -105,15 +116,14 @@ const UploadForm = ({ addNewUploadedFile, agents }) => {
       return;
     }
     const data = newFiles.filter(
-      (newFile) =>
-        !files.find((prevFile) => newfile.agent_name === prevfile.agent_name)
+      (newFile) => !files.find((prevFile) => newFile.name === prevFile.name)
     );
     setFile((prev) => [...prev, ...data]);
 
     try {
       const formData = new FormData();
       data.forEach((file) => {
-        formData.append(file.agent_name, file);
+        formData.append(file.name, file);
       });
       const { data: fileData } = await readExcel(formData);
       console.log(fileData);

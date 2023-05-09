@@ -43,6 +43,7 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
       Object.values(files).map(async (fileObj: formidable.file) => {
         const fileData = endBuffers[fileObj.newFilename];
         switch (fileObj.mimetype) {
+          case "text/csv":
           case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
           case "application/vnd.ms-excel":
             const workbook = await read(fileData, { type: "buffer" });
