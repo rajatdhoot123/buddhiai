@@ -1,4 +1,4 @@
-import { useUser } from "@supabase/auth-helpers-react";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { ACCEPTED_FILES, AGENT_TYPE, CSV, EXCEL_FORMAT } from "../../constant";
 import { QA_PROMPT_MAPPER, generatePrompt } from "../../constant/prompt";
 import { useApp } from "../../context/AppContext";
@@ -17,7 +17,8 @@ import {
 import FilesPreview from "../../components/FilePreview";
 import { HiUpload } from "react-icons/hi";
 import { toast } from "react-hot-toast";
-import { readExcel } from "../../axios";
+import { readExcel, trainBulk } from "../../axios";
+import Loader from "../../components/Loader";
 
 const SET_STEP = "SET_STEP";
 const SET_AGENT_NAME = "SET_AGENT_NAME";
@@ -250,10 +251,11 @@ const FirstStep = ({ state, dispatch }) => {
   );
 };
 
-function UploadDropzone() {
+function TrainAgent() {
   const { files = [], addNewUploadedFile } = useApp();
   const user = useUser();
-
+  const supabaseClient = useSupabaseClient();
+  const [isLoading, setLoading] = useState(false);
   const [state, dispatch] = useReducer(reducer, {
     step: 1,
     agent_name: "",
@@ -265,9 +267,11 @@ function UploadDropzone() {
 
   const handleNextStep = () => {
     if (state.step === 1) {
+      if (files.find((a) => a.agent_name === state.agent_name)) {
+        return toast.error(`Agent with name ${state.agent_name} already exist`);
+      }
       if (!state.agent_name) {
-        toast.error("Agent name required");
-        return;
+        return toast.error("Agent name required");
       }
       if (checkSpecialCharacter(state.agent_name)) {
         return toast.error("Special character not allowed in agent name");
@@ -282,6 +286,59 @@ function UploadDropzone() {
 
   const handlePrevStep = () => {
     dispatch({ type: SET_PREV_STEP });
+  };
+
+  const handleAgentCreate = async () => {
+    const agent = state.agent_name.trim();
+    const formData = new FormData();
+    formData.append("agent_name", state.agent_name);
+    formData.append("prompt", state.prompt);
+    state.files.forEach((file) => {
+      formData.append(file.name, file);
+    });
+    try {
+      setLoading("Hold on we are training your files");
+      const uploadFiles = state.files.map((file) => {
+        return supabaseClient.storage
+          .from("buddhi_docs")
+          .upload(`${user.id}/${agent}/${file.name}`, file, {
+            cacheControl: "3600",
+            upsert: true,
+          });
+      });
+      const data = await Promise.allSettled([
+        trainBulk(formData),
+        ...uploadFiles,
+      ]);
+      const [isTraind, ...uploadedFiles] = data;
+
+      const filesToInsertInTable = uploadedFiles.map((file) => {
+        if (file.status === "fulfilled") {
+          return file?.value?.data?.path;
+        }
+        return "";
+      });
+      await supabaseClient
+        .from("chat_agents")
+        .insert({
+          created_by: user?.id,
+          prompt: state.prompt,
+          agent_type: state.agent_type,
+          agent_name: state.agent_name,
+          files: filesToInsertInTable,
+        })
+        .select();
+      if (isTraind.status === "fulfilled") {
+        toast.success(`${agent} Trained Successfully`);
+      } else {
+        toast.error(`${agent} training failed please try again`);
+      }
+      setLoading("");
+    } catch (err) {
+      setLoading("");
+    } finally {
+      await addNewUploadedFile();
+    }
   };
 
   return (
@@ -390,10 +447,14 @@ function UploadDropzone() {
                       Prev
                     </Button>
                     <Button
-                      onClick={handleNextStep}
-                      className="my-5 w-36 bg-white text-black hover:text-white"
+                      disabled={isLoading}
+                      onClick={handleAgentCreate}
+                      className="flex my-5 w-44 bg-white text-black hover:text-white"
                     >
-                      Create Agent
+                      {isLoading && (
+                        <Loader className="text-black hover:text-white" />
+                      )}
+                      <span>{isLoading || "Create Agent"}</span>
                     </Button>
                   </div>
                 </div>
@@ -403,32 +464,8 @@ function UploadDropzone() {
           }
         })()}
       </div>
-      {/* <UploadForm agents={files} addNewUploadedFile={addNewUploadedFile} /> */}
     </div>
-
-    // <div className="m-12 grid grid-cols-1 place-content-center">
-    //   {files.length >= 5 &&
-    //   user?.id !== "c803c897-c9d7-463d-93ef-56f525f3ee9c" ? (
-    //     <div>
-    //       <div className="text-center text-3xl text-white">
-    //         Currently In free version we are allowing 5 files to train
-    //       </div>
-    //       <div className="bg-green-500 w-full rounded-md p-2 mt-5">
-    //         <a
-    //           className="flex items-center justify-center text-xl"
-    //           target="_blank"
-    //           href={`https://api.whatsapp.com/send?phone=${WHATSAPP_SUPPORT_NUMBER}&text=hello`}
-    //         >
-    //           <FaWhatsapp className="text-white" />
-    //           <span className="text-white font-bold ml-2">Contact Us </span>
-    //         </a>
-    //       </div>
-    //     </div>
-    //   ) : (
-    //     <UploadForm agents={files} addNewUploadedFile={addNewUploadedFile} />
-    //   )}
-    // </div>
   );
 }
 
-export default UploadDropzone;
+export default TrainAgent;

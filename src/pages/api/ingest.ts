@@ -6,10 +6,12 @@ import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { HNSWLib } from "langchain/vectorstores/hnswlib";
 import { fileConsumer, formidablePromise } from "@/lib/formidable";
 import { getTextContentFromPDF } from "@/lib/pdf";
+import { excelToText } from "@/lib/excel";
 import { chunk } from "@/lib/utils";
 import { join } from "path";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import redis from "@/lib/redis";
+import { EXCEL_FORMAT } from "@/constant";
 
 const formidableConfig = {
   keepExtensions: true,
@@ -66,6 +68,9 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
           break;
         case "application/octet-stream":
           fileText = fileData.toString();
+          break;
+        case EXCEL_FORMAT:
+          fileText = await excelToText(fileData);
           break;
         default:
           throw new Error("Unsupported file type.");
