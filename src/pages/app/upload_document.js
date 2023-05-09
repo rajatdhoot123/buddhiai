@@ -1,87 +1,419 @@
 import { FaWhatsapp } from "react-icons/fa";
 import { useUser } from "@supabase/auth-helpers-react";
-import { WHATSAPP_SUPPORT_NUMBER } from "../../constant";
+import { ACCEPTED_FILES, WHATSAPP_SUPPORT_NUMBER } from "../../constant";
 import { useApp } from "../../context/AppContext";
 import UploadForm from "../../components/Form";
+import { useReducer, useRef, useState } from "react";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../../../components/ui/dialog";
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  Checkbox,
+  Button,
+} from "../../../components/ui";
+import FilesPreview from "../../components/FilePreview";
+import { HiUpload } from "react-icons/hi";
+import { toast } from "react-hot-toast";
 
-const UploadedFiles = ({ file, userId }) => {
+const AGENT_TYPE = {
+  SUPER_AGENT: "SUPER_AGENT",
+  SHOPPING_AGENT: "SHOPPING_AGENT",
+};
+
+const SET_STEP = "SET_STEP";
+const SET_AGENT_NAME = "SET_AGENT_NAME";
+const SET_AGENT_TYPE = "SET_AGENT_TYPE";
+const SET_NEXT_STEP = "SET_NEXT_STEP";
+const FILE_REMOVE = "FILE_REMOVE";
+const SET_FILES = "SET_FILES";
+const REMOVE_FILE = "REMOVE_FILE";
+const SET_PREV_STEP = "SET_PREV_STEP";
+const SET_PROMPT = "SET_PROMPT";
+
+function reducer(state, action) {
+  switch (action.type) {
+    case SET_PREV_STEP:
+      return { ...state, step: state.step - 1 };
+    case SET_FILES:
+      return { ...state, files: [...state.files, ...action.payload] };
+    case FILE_REMOVE:
+      return state;
+    case SET_NEXT_STEP:
+      return { ...state, step: state.step + 1 };
+    case SET_AGENT_TYPE:
+      return { ...state, agent_type: action.payload };
+    case SET_PROMPT:
+      return { ...state, prompt: action.payload };
+    case SET_STEP:
+      return { ...state, step: action.payload };
+    case REMOVE_FILE:
+      return {
+        ...state,
+        files: state.files.filter((_, index) => index !== action.payload),
+      };
+    case SET_AGENT_NAME:
+      console.log(action);
+      return {
+        ...state,
+        agent_name: action.payload, //{ ...state.agent_name, ...action.payload },
+      };
+    default:
+      return state;
+  }
+}
+
+const ThirdStep = ({ state, dispatch }) => {
   return (
-    <li
-      className="text-white border border-white border-opacity-60 rounded-md p-2"
-      key={file.agent_name}
+    <div className="grid mb-[10px]" name="question">
+      <div className="flex items-baseline justify-between">
+        <div className="text-[15px] font-medium leading-[35px] text-white">
+          Prompt
+        </div>
+      </div>
+      <textarea
+        value={state.prompt}
+        onChange={(e) =>
+          dispatch({ type: SET_PROMPT, payload: e.target.value })
+        }
+        rows={5}
+        className="box-border w-full bg-blackA5 shadow-blackA9 inline-flex appearance-none items-center justify-center rounded-[4px] p-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none hover:shadow-[0_0_0_1px_black] focus:shadow-[0_0_0_2px_black] selection:color-white selection:bg-blackA9 resize-none"
+        required
+      />
+    </div>
+  );
+  return null;
+};
+
+const SecondStep = ({ state, dispatch }) => {
+  const fileSize = useRef(0);
+
+  const [isDragging, setIsDragging] = useState(false);
+  const handleFileRemove = (index) => {
+    dispatch({ type: REMOVE_FILE, payload: index });
+  };
+
+  const handleSetFiles = async (newFiles) => {
+    fileSize.current = newFiles.reduce((acc, current) => {
+      return acc + Number(current.size);
+    }, fileSize.current);
+
+    if (fileSize.current / (1024 * 1024) > 5) {
+      toast(
+        "For free version we support file less than 4mb. Contact us for larger files"
+      );
+      return;
+    }
+    const data = newFiles.filter(
+      (newFile) =>
+        !state.files.find((prevFile) => newFile.name === prevFile.name)
+    );
+    dispatch({ type: SET_FILES, payload: data });
+
+    // try {
+    //   const formData = new FormData();
+    //   data.forEach((file) => {
+    //     if ([CSV, EXCEL_FORMAT].includes(file.type)) {
+    //       formData.append(file.name, file);
+    //     }
+    //   });
+    //   const { data: fileData } = await readExcel(formData);
+    //   const columns = fileData.filter(Boolean).reduce((acc, current) => {
+    //     return [...acc, ...Object.keys(current.data[0])];
+    //   }, []);
+
+    //   promptString.current = [
+    //     ...new Set([...promptString.current, ...columns]),
+    //   ];
+    //   if (promptString.current.length && state.agentType === "shopping_agent") {
+    //     setState((prev) => ({
+    //       ...prev,
+    //       prompt: generatePrompt(promptString.current.join(",")),
+    //     }));
+    //   }
+    // } catch (err) {
+    //   console.log(err);
+    // }
+  };
+
+  const handleDragEnter = (event) => {
+    event.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+  };
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    setIsDragging(false);
+    const files = Array.from(event.dataTransfer.files);
+    const acceptedFiles = files.filter((file) =>
+      ACCEPTED_FILES.includes(file.type)
+    );
+    handleSetFiles(acceptedFiles);
+  };
+  return (
+    <div
+      name="file-upload"
+      className={`${
+        isDragging ? "border-green-500 bg-green-50" : "border-gray-300 bg-white"
+      } w-full border-2 border-dashed rounded-lg p-8 flex flex-col items-center justify-center text-gray-600`}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
     >
-      <div className="truncate font-bold text-center">{file.agent_name}</div>
-      <Dialog>
-        <DialogTrigger className="bg-indigo-400 text-white text-sm font-bold px-2 rounded-md flex items-center w-full p-1 mt-2 text-center justify-center">
-          Embed
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add the following script to your website</DialogTitle>
-            <DialogDescription className="bg-gray-700 text-white px-5 rounded-md py-2">
-              <textarea
-                readOnly
-                rows={7}
-                className="focus:outline-none w-full bg-transparent"
-                value={`<script \nbuddhi_api_id="${
-                  typeof window !== "undefined" &&
-                  window.btoa(JSON.stringify({ filename: file.agent_name, userId }))
-                }" \nsrc="https://www.buddhiai.app/buddi_widget/min-buddhi.js" async>\n</script>`}
-              />
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
-    </li>
+      <label
+        htmlFor="file_upload"
+        className="flex items-baseline justify-between w-full"
+      >
+        <div className="w-full text-[15px] font-medium leading-[35px] text-black">
+          <div className="flex flex-col items-center">
+            <HiUpload className="h-12 w-12" aria-hidden="true" />
+            <div className="whitespace-nowrap	cursor-pointer text-cen">
+              {isDragging
+                ? "Drop pdf file here"
+                : "Drag and drop or click here"}
+            </div>
+          </div>
+          <FilesPreview files={state.files} onFileRemove={handleFileRemove} />
+        </div>
+        <input
+          required
+          multiple
+          id="file_upload"
+          accept={ACCEPTED_FILES.join(",")}
+          type="file"
+          className="sr-only"
+          onChange={(event) => {
+            const files = Array.from(event.target.files);
+            handleSetFiles(files);
+            event.target.value = null;
+          }}
+        />
+      </label>
+    </div>
+  );
+};
+
+const FirstStep = ({ state, dispatch }) => {
+  return (
+    <div className="w-full">
+      <div className="flex items-baseline justify-between">
+        <div className="text-[15px] font-medium leading-[35px] text-white">
+          Agent Name
+        </div>
+      </div>
+      <input
+        onChange={(e) => {
+          dispatch({ type: SET_AGENT_NAME, payload: e.target.value });
+        }}
+        value={state.agent_name}
+        className="box-border w-full bg-blackA5 shadow-blackA9 inline-flex h-[35px] appearance-none items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none hover:shadow-[0_0_0_1px_black] focus:shadow-[0_0_0_2px_black] selection:color-white selection:bg-blackA9"
+        type="text"
+      />
+
+      <div className="flex items-baseline justify-between">
+        <div className="text-[15px] font-medium leading-[35px] text-white">
+          Select Agent Type
+        </div>
+      </div>
+      <Select
+        value={state.agent_type}
+        onValueChange={(e) => {
+          dispatch({ type: SET_AGENT_TYPE, payload: e });
+        }}
+      >
+        <SelectTrigger className="bg-white">
+          <SelectValue placeholder="Select Agent Type" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Select Agent</SelectLabel>
+            <SelectItem value={AGENT_TYPE.SUPER_AGENT}>Super Agent</SelectItem>
+            <SelectItem value={AGENT_TYPE.SHOPPING_AGENT}>
+              Shopping Agent
+            </SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </div>
   );
 };
 
 function UploadDropzone() {
   const { files = [], addNewUploadedFile } = useApp();
-
   const user = useUser();
 
+  const [state, dispatch] = useReducer(reducer, {
+    step: 1,
+    agent_name: "",
+    agent_type: AGENT_TYPE.SUPER_AGENT,
+    files: [],
+    prompt: "",
+  });
+
+  const handleNextStep = () => {
+    dispatch({ type: SET_NEXT_STEP });
+  };
+
+  const handlePrevStep = () => {
+    dispatch({ type: SET_PREV_STEP });
+  };
+
   return (
-    <div className="m-12 grid grid-cols-1 place-content-center">
-      {files.length >= 5 &&
-      user?.id !== "c803c897-c9d7-463d-93ef-56f525f3ee9c" ? (
-        <div>
-          <div className="text-center text-3xl text-white">
-            Currently In free version we are allowing 5 files to train
-          </div>
-          <div className="bg-green-500 w-full rounded-md p-2 mt-5">
-            <a
-              className="flex items-center justify-center text-xl"
-              target="_blank"
-              href={`https://api.whatsapp.com/send?phone=${WHATSAPP_SUPPORT_NUMBER}&text=hello`}
+    <div className="md:px-44 p-5 h-full flex items-center flex-col justify-center w-full">
+      <ol className="flex items-center w-full justify-center">
+        <li className="flex w-full items-center text-blue-600 dark:text-blue-500 after:content-[''] after:w-full after:h-1 after:border-b after:border-blue-100 after:border-4 after:inline-block dark:after:border-blue-800">
+          <span className="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-full lg:h-12 lg:w-12 dark:bg-blue-800 shrink-0">
+            <svg
+              aria-hidden="true"
+              className="w-5 h-5 text-blue-600 lg:w-6 lg:h-6 dark:text-blue-300"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <FaWhatsapp className="text-white" />
-              <span className="text-white font-bold ml-2">Contact Us </span>
-            </a>
-          </div>
-        </div>
-      ) : (
-        <UploadForm agents={files} addNewUploadedFile={addNewUploadedFile} />
-      )}
-      <div className="p-5">
-        <div className="text-3xl text-center font-semibold text-white my-5">
-          Available Agents
-        </div>
-        <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-          {files.map((file) => (
-            <UploadedFiles userId={user?.id} key={file.agent_name} file={file} />
-          ))}
-        </ul>
+              <path
+                fillRule="evenodd"
+                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                clipRule="evenodd"
+              ></path>
+            </svg>
+          </span>
+        </li>
+        <li className="flex w-full items-center after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-100 after:border-4 after:inline-block dark:after:border-gray-700">
+          <span className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full lg:h-12 lg:w-12 dark:bg-gray-700 shrink-0">
+            <svg
+              aria-hidden="true"
+              className="w-5 h-5 text-gray-500 lg:w-6 lg:h-6 dark:text-gray-100"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zM4 4h3a3 3 0 006 0h3a2 2 0 012 2v9a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm2.5 7a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm2.45 4a2.5 2.5 0 10-4.9 0h4.9zM12 9a1 1 0 100 2h3a1 1 0 100-2h-3zm-1 4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z"
+                clipRule="evenodd"
+              ></path>
+            </svg>
+          </span>
+        </li>
+        <li className="flex items-center">
+          <span className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full lg:h-12 lg:w-12 dark:bg-gray-700 shrink-0">
+            <svg
+              aria-hidden="true"
+              className="w-5 h-5 text-gray-500 lg:w-6 lg:h-6 dark:text-gray-100"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+              <path
+                fillRule="evenodd"
+                d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clipRule="evenodd"
+              ></path>
+            </svg>
+          </span>
+        </li>
+      </ol>
+
+      <div className="py-12 flex items-center w-full">
+        {(() => {
+          switch (state.step) {
+            case 1:
+              return (
+                <div className="w-full">
+                  <FirstStep state={state} dispatch={dispatch} />
+                  <div className="w-full flex justify-end">
+                    <Button
+                      onClick={handleNextStep}
+                      className="my-5 w-36 bg-white text-black hover:text-white"
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </div>
+              );
+            case 2:
+              return (
+                <div className="w-full">
+                  <SecondStep state={state} dispatch={dispatch} />
+                  <div className="w-full flex justify-between">
+                    <Button
+                      onClick={handlePrevStep}
+                      className="my-5 w-36 bg-white text-black hover:text-white"
+                    >
+                      Prev
+                    </Button>
+                    <Button
+                      onClick={handleNextStep}
+                      className="my-5 w-36 bg-white text-black hover:text-white"
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </div>
+              );
+            case 3:
+              return (
+                <div className="w-full">
+                  <ThirdStep state={state} dispatch={dispatch} />
+                  <div className="w-full flex justify-between">
+                    <Button
+                      onClick={handlePrevStep}
+                      className="my-5 w-36 bg-white text-black hover:text-white"
+                    >
+                      Prev
+                    </Button>
+                    <Button
+                      onClick={handleNextStep}
+                      className="my-5 w-36 bg-white text-black hover:text-white"
+                    >
+                      Create Agent
+                    </Button>
+                  </div>
+                </div>
+              );
+            default:
+              return null;
+          }
+        })()}
       </div>
+      {/* <UploadForm agents={files} addNewUploadedFile={addNewUploadedFile} /> */}
     </div>
+
+    // <div className="m-12 grid grid-cols-1 place-content-center">
+    //   {files.length >= 5 &&
+    //   user?.id !== "c803c897-c9d7-463d-93ef-56f525f3ee9c" ? (
+    //     <div>
+    //       <div className="text-center text-3xl text-white">
+    //         Currently In free version we are allowing 5 files to train
+    //       </div>
+    //       <div className="bg-green-500 w-full rounded-md p-2 mt-5">
+    //         <a
+    //           className="flex items-center justify-center text-xl"
+    //           target="_blank"
+    //           href={`https://api.whatsapp.com/send?phone=${WHATSAPP_SUPPORT_NUMBER}&text=hello`}
+    //         >
+    //           <FaWhatsapp className="text-white" />
+    //           <span className="text-white font-bold ml-2">Contact Us </span>
+    //         </a>
+    //       </div>
+    //     </div>
+    //   ) : (
+    //     <UploadForm agents={files} addNewUploadedFile={addNewUploadedFile} />
+    //   )}
+    // </div>
   );
 }
 

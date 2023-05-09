@@ -9,7 +9,8 @@ import { useEffect, useState } from "react";
 import Loader from "../components/Loader";
 import useMediaQuery from "../hooks/useMediaQuery";
 const LEFT_ICONS = [
-  { label: "AI Agent", link: "/app" },
+  { label: "Your Agent", link: "/app" },
+  { label: "Agents", link: "/app/agent" },
   { label: "Upload and Train", link: "/app/upload_document" },
 ];
 

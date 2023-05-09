@@ -19,6 +19,17 @@ import { trainBulk, readExcel } from "../axios";
 import Loader from "./Loader";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 
+const generatePrompt = (
+  context
+) => `You are a friendly, conversational retail shopping assistant. Use the following context including ${context} to show the shopper whats available with link of product, help find what they want, and answer any questions.
+It's ok if you don't know the answer.
+
+{context}
+
+Question: {question}
+Helpful answer in markdown:
+`;
+
 const EXCEL_FORMAT =
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 const CSV = "text/csv";
@@ -99,7 +110,7 @@ const UploadForm = ({ addNewUploadedFile, agents }) => {
     agentType: "super_agent",
     prompt: QA_PROMPT_MAPPER.super_agent,
   });
-  const [columnNames, setColumnNames] = useState({});
+  const promptString = useRef([]);
   const [loading, setLoading] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFile] = useState([]);
@@ -125,18 +136,24 @@ const UploadForm = ({ addNewUploadedFile, agents }) => {
     try {
       const formData = new FormData();
       data.forEach((file) => {
-        formData.append(file.name, file);
+        if ([CSV, EXCEL_FORMAT].includes(file.type)) {
+          formData.append(file.name, file);
+        }
       });
       const { data: fileData } = await readExcel(formData);
-      setColumnNames((prev) => ({
-        ...prev,
-        ...fileData.filter(Boolean).reduce((acc, current) => {
-          return {
-            ...acc,
-            [current.name]: current,
-          };
-        }, {}),
-      }));
+      const columns = fileData.filter(Boolean).reduce((acc, current) => {
+        return [...acc, ...Object.keys(current.data[0])];
+      }, []);
+
+      promptString.current = [
+        ...new Set([...promptString.current, ...columns]),
+      ];
+      if (promptString.current.length && state.agentType === "shopping_agent") {
+        setState((prev) => ({
+          ...prev,
+          prompt: generatePrompt(promptString.current.join(",")),
+        }));
+      }
     } catch (err) {
       console.log(err);
     }
@@ -237,11 +254,21 @@ const UploadForm = ({ addNewUploadedFile, agents }) => {
     }
   };
 
-  const columns = Object.entries(columnNames).reduce((acc, [name, val]) => {
-    return [...acc, ...Object.keys(val.data[0])];
-  }, []);
+  const handleCheckChange = (e, col) => {
+    if (e) {
+      promptString.current.push(col);
+    } else {
+      promptString.current = promptString.current.filter((el) => el !== col);
+      if (promptString.current.length && state.agentType === "shopping_agent") {
+        console.log("Here");
+        setState((prev) => ({
+          ...prev,
+          prompt: generatePrompt(promptString.current.join(",")),
+        }));
+      }
+    }
+  };
 
-  console.log({ columns });
   return (
     <Form.Root onSubmit={handleSubmit} className="w-full md:w-1/2 m-auto p-5">
       <Form.Field className="grid mb-[10px]" name="file_name">
@@ -333,18 +360,29 @@ const UploadForm = ({ addNewUploadedFile, agents }) => {
           </Form.Control>
         </div>
       </Form.Field>
-      {/* {columnNames.length && (
+      {promptString.current.length && state.agentType === "shopping_agent" && (
         <Form.Field className="grid mb-[10px]" name="file_name">
           <div className="flex items-baseline justify-between">
             <Form.Label className="text-[15px] font-medium leading-[35px] text-white">
               Include in Prompt
             </Form.Label>
           </div>
-          <Form.Control asChild>
-            <Checkbox className="bg-white" />
-          </Form.Control>
+          <div className="grid grid-cols-2">
+            {promptString.current.map((col) => (
+              <div className="flex items-center" key={col}>
+                <Checkbox
+                  defaultChecked={true}
+                  onCheckedChange={(e) => {
+                    handleCheckChange(e, col);
+                  }}
+                  className="bg-white"
+                />
+                <div className="text-white text-sm ml-2">{col}</div>
+              </div>
+            ))}
+          </div>
         </Form.Field>
-      )} */}
+      )}
       <Form.Field className="grid mb-[10px]" name="question">
         <div className="flex items-baseline justify-between">
           <Form.Label className="text-[15px] font-medium leading-[35px] text-white">
