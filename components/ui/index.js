@@ -12,3 +12,4 @@ export {
   SelectItem,
   SelectSeparator,
 } from "./select";
+export { Checkbox } from "./checkbox";

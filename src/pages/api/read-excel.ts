@@ -39,8 +39,9 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
       fileWriteStreamHandler: (file) => fileConsumer(file, endBuffers),
     });
 
+    const fileNames = Object.keys(files);
     const docs = await Promise.all(
-      Object.values(files).map(async (fileObj: formidable.file) => {
+      Object.values(files).map(async (fileObj: formidable.file, index) => {
         const fileData = endBuffers[fileObj.newFilename];
         switch (fileObj.mimetype) {
           case "text/csv":
@@ -51,13 +52,14 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
             const jsonObject = utils.sheet_to_json(workbook.Sheets[sheetName], {
               raw: false,
             });
-            return jsonObject;
+            return { data: jsonObject, name: fileNames[index] };
           default:
-            throw new Error("Unsupported file type.");
+            return null;
+          // throw new Error("Unsupported file type.");
         }
       })
     );
-    res.status(200).json({ data: docs });
+    res.status(200).json(docs);
   } catch (err) {
     return res.status(500).json({ message: "Something Went Wrong" });
   }

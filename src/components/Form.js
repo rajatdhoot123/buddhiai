@@ -8,6 +8,7 @@ import {
   SelectGroup,
   SelectItem,
   SelectLabel,
+  Checkbox,
 } from "../../components/ui";
 import { QA_PROMPT_MAPPER } from "../constant/prompt";
 import { FaRegFilePdf, FaRegFileExcel } from "react-icons/fa";
@@ -98,6 +99,7 @@ const UploadForm = ({ addNewUploadedFile, agents }) => {
     agentType: "super_agent",
     prompt: QA_PROMPT_MAPPER.super_agent,
   });
+  const [columnNames, setColumnNames] = useState({});
   const [loading, setLoading] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFile] = useState([]);
@@ -126,7 +128,15 @@ const UploadForm = ({ addNewUploadedFile, agents }) => {
         formData.append(file.name, file);
       });
       const { data: fileData } = await readExcel(formData);
-      console.log(fileData);
+      setColumnNames((prev) => ({
+        ...prev,
+        ...fileData.filter(Boolean).reduce((acc, current) => {
+          return {
+            ...acc,
+            [current.name]: current,
+          };
+        }, {}),
+      }));
     } catch (err) {
       console.log(err);
     }
@@ -227,6 +237,11 @@ const UploadForm = ({ addNewUploadedFile, agents }) => {
     }
   };
 
+  const columns = Object.entries(columnNames).reduce((acc, [name, val]) => {
+    return [...acc, ...Object.keys(val.data[0])];
+  }, []);
+
+  console.log({ columns });
   return (
     <Form.Root onSubmit={handleSubmit} className="w-full md:w-1/2 m-auto p-5">
       <Form.Field className="grid mb-[10px]" name="file_name">
@@ -318,6 +333,18 @@ const UploadForm = ({ addNewUploadedFile, agents }) => {
           </Form.Control>
         </div>
       </Form.Field>
+      {/* {columnNames.length && (
+        <Form.Field className="grid mb-[10px]" name="file_name">
+          <div className="flex items-baseline justify-between">
+            <Form.Label className="text-[15px] font-medium leading-[35px] text-white">
+              Include in Prompt
+            </Form.Label>
+          </div>
+          <Form.Control asChild>
+            <Checkbox className="bg-white" />
+          </Form.Control>
+        </Form.Field>
+      )} */}
       <Form.Field className="grid mb-[10px]" name="question">
         <div className="flex items-baseline justify-between">
           <Form.Label className="text-[15px] font-medium leading-[35px] text-white">
