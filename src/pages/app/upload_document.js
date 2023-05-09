@@ -1,9 +1,9 @@
-import { FaWhatsapp } from "react-icons/fa";
 import { useUser } from "@supabase/auth-helpers-react";
-import { ACCEPTED_FILES, WHATSAPP_SUPPORT_NUMBER } from "../../constant";
+import { ACCEPTED_FILES, AGENT_TYPE, CSV, EXCEL_FORMAT } from "../../constant";
+import { QA_PROMPT_MAPPER, generatePrompt } from "../../constant/prompt";
 import { useApp } from "../../context/AppContext";
-import UploadForm from "../../components/Form";
-import { useReducer, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
+import { checkSpecialCharacter } from "../../utils";
 import {
   Select,
   SelectTrigger,
@@ -12,17 +12,12 @@ import {
   SelectGroup,
   SelectItem,
   SelectLabel,
-  Checkbox,
   Button,
 } from "../../../components/ui";
 import FilesPreview from "../../components/FilePreview";
 import { HiUpload } from "react-icons/hi";
 import { toast } from "react-hot-toast";
-
-const AGENT_TYPE = {
-  SUPER_AGENT: "SUPER_AGENT",
-  SHOPPING_AGENT: "SHOPPING_AGENT",
-};
+import { readExcel } from "../../axios";
 
 const SET_STEP = "SET_STEP";
 const SET_AGENT_NAME = "SET_AGENT_NAME";
@@ -33,9 +28,12 @@ const SET_FILES = "SET_FILES";
 const REMOVE_FILE = "REMOVE_FILE";
 const SET_PREV_STEP = "SET_PREV_STEP";
 const SET_PROMPT = "SET_PROMPT";
+const SET_PROMPT_HELPER = "SET_PROMPT_HELPER";
 
 function reducer(state, action) {
   switch (action.type) {
+    case SET_PROMPT_HELPER:
+      return { ...state, prompt_helper: action.payload };
     case SET_PREV_STEP:
       return { ...state, step: state.step - 1 };
     case SET_FILES:
@@ -45,7 +43,11 @@ function reducer(state, action) {
     case SET_NEXT_STEP:
       return { ...state, step: state.step + 1 };
     case SET_AGENT_TYPE:
-      return { ...state, agent_type: action.payload };
+      return {
+        ...state,
+        agent_type: action.payload,
+        prompt: QA_PROMPT_MAPPER[action.payload],
+      };
     case SET_PROMPT:
       return { ...state, prompt: action.payload };
     case SET_STEP:
@@ -56,7 +58,6 @@ function reducer(state, action) {
         files: state.files.filter((_, index) => index !== action.payload),
       };
     case SET_AGENT_NAME:
-      console.log(action);
       return {
         ...state,
         agent_name: action.payload, //{ ...state.agent_name, ...action.payload },
@@ -67,6 +68,14 @@ function reducer(state, action) {
 }
 
 const ThirdStep = ({ state, dispatch }) => {
+  useEffect(() => {
+    if (state.agent_type === AGENT_TYPE.SHOPPING_AGENT && state.prompt_helper) {
+      dispatch({
+        type: SET_PROMPT,
+        payload: generatePrompt(AGENT_TYPE.SHOPPING_AGENT, state.prompt_helper),
+      });
+    }
+  }, [state.agent_type, state.prompt_helper, dispatch]);
   return (
     <div className="grid mb-[10px]" name="question">
       <div className="flex items-baseline justify-between">
@@ -79,13 +88,12 @@ const ThirdStep = ({ state, dispatch }) => {
         onChange={(e) =>
           dispatch({ type: SET_PROMPT, payload: e.target.value })
         }
-        rows={5}
+        rows={10}
         className="box-border w-full bg-blackA5 shadow-blackA9 inline-flex appearance-none items-center justify-center rounded-[4px] p-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none hover:shadow-[0_0_0_1px_black] focus:shadow-[0_0_0_2px_black] selection:color-white selection:bg-blackA9 resize-none"
         required
       />
     </div>
   );
-  return null;
 };
 
 const SecondStep = ({ state, dispatch }) => {
@@ -113,30 +121,22 @@ const SecondStep = ({ state, dispatch }) => {
     );
     dispatch({ type: SET_FILES, payload: data });
 
-    // try {
-    //   const formData = new FormData();
-    //   data.forEach((file) => {
-    //     if ([CSV, EXCEL_FORMAT].includes(file.type)) {
-    //       formData.append(file.name, file);
-    //     }
-    //   });
-    //   const { data: fileData } = await readExcel(formData);
-    //   const columns = fileData.filter(Boolean).reduce((acc, current) => {
-    //     return [...acc, ...Object.keys(current.data[0])];
-    //   }, []);
+    try {
+      const formData = new FormData();
+      data.forEach((file) => {
+        if ([CSV, EXCEL_FORMAT].includes(file.type)) {
+          formData.append(file.name, file);
+        }
+      });
+      const { data: fileData } = await readExcel(formData);
+      const columns = fileData.filter(Boolean).reduce((acc, current) => {
+        return [...acc, ...Object.keys(current.data[0])];
+      }, []);
 
-    //   promptString.current = [
-    //     ...new Set([...promptString.current, ...columns]),
-    //   ];
-    //   if (promptString.current.length && state.agentType === "shopping_agent") {
-    //     setState((prev) => ({
-    //       ...prev,
-    //       prompt: generatePrompt(promptString.current.join(",")),
-    //     }));
-    //   }
-    // } catch (err) {
-    //   console.log(err);
-    // }
+      dispatch({ type: SET_PROMPT_HELPER, payload: columns.join(",") });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleDragEnter = (event) => {
@@ -259,10 +259,24 @@ function UploadDropzone() {
     agent_name: "",
     agent_type: AGENT_TYPE.SUPER_AGENT,
     files: [],
-    prompt: "",
+    prompt: QA_PROMPT_MAPPER[AGENT_TYPE.SUPER_AGENT],
+    prompt_helper: "",
   });
 
   const handleNextStep = () => {
+    if (state.step === 1) {
+      if (!state.agent_name) {
+        toast.error("Agent name required");
+        return;
+      }
+      if (checkSpecialCharacter(state.agent_name)) {
+        return toast.error("Special character not allowed in agent name");
+      }
+    } else if (state.step === 2) {
+      if (state.files.length <= 0) {
+        return toast.error("Upload the file to train on");
+      }
+    }
     dispatch({ type: SET_NEXT_STEP });
   };
 

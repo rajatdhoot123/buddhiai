@@ -1,3 +1,4 @@
+import { AGENT_TYPE } from "./index";
 const QA_SHOPPING_ASSITANCE = `You are a friendly, conversational retail shopping assistant. Use the following context including product names, descriptions, and keywords to show the shopper whats available with link of product, help find what they want, and answer any questions.
  It's ok if you don't know the answer.
 
@@ -16,6 +17,21 @@ Question: {question}
 Helpful answer in markdown:`;
 
 export const QA_PROMPT_MAPPER: { [key: string]: string } = {
-  shopping_agent: QA_SHOPPING_ASSITANCE,
-  super_agent: QA_PROMPT,
+  [AGENT_TYPE.SHOPPING_AGENT]: QA_SHOPPING_ASSITANCE,
+  [AGENT_TYPE.SUPER_AGENT]: QA_PROMPT,
 };
+
+export function generatePrompt(type: string, helper: string) {
+  switch (type) {
+    case AGENT_TYPE.SHOPPING_AGENT:
+      return `You are a friendly, conversational retail shopping assistant. Use the following context including ${helper} to show the shopper whats available with link of product, help find what they want, and answer any questions.
+It's ok if you don't know the answer.
+     
+{context}
+     
+Question: {question}
+Helpful answer in markdown:`;
+    default:
+      return QA_PROMPT;
+  }
+}
