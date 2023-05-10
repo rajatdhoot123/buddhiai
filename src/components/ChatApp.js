@@ -64,13 +64,11 @@ const ChatApp = ({ activeFile, buddhiAppId, styles, initial_message = "" }) => {
         buddhiAppId,
       });
       setHistory((prev) => [...prev, [payload.text, data.text]]);
-      setState((prev) => prev.filter((_, index) => index !== prev.length - 1));
       setState((prev) => [
         ...prev,
         { id: uuidv4(), type: "answer", text: data.text },
       ]);
     } catch (err) {
-      setState((prev) => prev.filter((_, index) => index !== prev.length - 1));
       setState((prev) => [
         ...prev,
         {
@@ -80,6 +78,7 @@ const ChatApp = ({ activeFile, buddhiAppId, styles, initial_message = "" }) => {
         },
       ]);
     } finally {
+      setState((prev) => prev.filter((_, index) => index !== prev.length - 2));
     }
   };
 
