@@ -130,7 +130,6 @@ const SecondStep = ({ state, dispatch }) => {
           formData.append(file.name, file);
         }
       });
-      console.log("Called")
       const { data: fileData } = await readExcel(formData);
       const columns = fileData.filter(Boolean).reduce((acc, current) => {
         return [...acc, ...Object.keys(current.data[0])];
@@ -302,6 +301,15 @@ function TrainAgent() {
     });
     try {
       setLoading("Hold on we are training your files");
+      const { data: createAgent, error } = await supabaseClient
+        .from("chat_agents")
+        .insert({
+          created_by: user?.id,
+          prompt: final_prompt,
+          agent_type: state.agent_type,
+          agent_name: state.agent_name,
+        })
+        .select();
       const uploadFiles = state.files.map((file) => {
         return supabaseClient.storage
           .from("buddhi_docs")
@@ -322,16 +330,16 @@ function TrainAgent() {
         }
         return "";
       });
+
       await supabaseClient
         .from("chat_agents")
-        .insert({
-          created_by: user?.id,
-          prompt: final_prompt,
-          agent_type: state.agent_type,
-          agent_name: state.agent_name,
-          files: filesToInsertInTable,
+        .update({
+          files: [
+            "buddhi_docs/c803c897-c9d7-463d-93ef-56f525f3ee9c/RaghuNEW/raghu.xlsx",
+          ],
         })
-        .select();
+        .eq("id", createAgent[0].id);
+
       if (isTraind.status === "fulfilled") {
         toast.success(`${agent} Trained Successfully`);
         router.push("/app/agent");
