@@ -1,6 +1,6 @@
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { ACCEPTED_FILES, AGENT_TYPE, CSV, EXCEL_FORMAT } from "../../constant";
-import { QA_PROMPT_MAPPER, generatePrompt } from "../../constant/prompt";
+import { PROMPT_SUFFIX, generatePrompt } from "../../constant/prompt";
 import { useApp } from "../../context/AppContext";
 import { useEffect, useReducer, useRef, useState } from "react";
 import { checkSpecialCharacter } from "../../utils";
@@ -47,7 +47,7 @@ function reducer(state, action) {
       return {
         ...state,
         agent_type: action.payload,
-        prompt: QA_PROMPT_MAPPER[action.payload],
+        prompt: generatePrompt(action.payload),
       };
     case SET_PROMPT:
       return { ...state, prompt: action.payload };
@@ -261,7 +261,7 @@ function TrainAgent() {
     agent_name: "",
     agent_type: AGENT_TYPE.SUPER_AGENT,
     files: [],
-    prompt: QA_PROMPT_MAPPER[AGENT_TYPE.SUPER_AGENT],
+    prompt: generatePrompt(AGENT_TYPE.SUPER_AGENT),
     prompt_helper: "",
   });
 
@@ -289,10 +289,11 @@ function TrainAgent() {
   };
 
   const handleAgentCreate = async () => {
+    const final_prompt = `${state.prompt} ${PROMPT_SUFFIX}`;
     const agent = state.agent_name.trim();
     const formData = new FormData();
     formData.append("agent_name", state.agent_name);
-    formData.append("prompt", state.prompt);
+    formData.append("prompt", final_prompt);
     state.files.forEach((file) => {
       formData.append(file.name, file);
     });
@@ -322,7 +323,7 @@ function TrainAgent() {
         .from("chat_agents")
         .insert({
           created_by: user?.id,
-          prompt: state.prompt,
+          prompt: final_prompt,
           agent_type: state.agent_type,
           agent_name: state.agent_name,
           files: filesToInsertInTable,
