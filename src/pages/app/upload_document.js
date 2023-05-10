@@ -310,6 +310,10 @@ function TrainAgent() {
           agent_name: state.agent_name,
         })
         .select();
+
+      if (error) {
+        return toast.error(`Something went wrong: ${error.message}`);
+      }
       const uploadFiles = state.files.map((file) => {
         return supabaseClient.storage
           .from("buddhi_docs")
@@ -334,9 +338,7 @@ function TrainAgent() {
       await supabaseClient
         .from("chat_agents")
         .update({
-          files: [
-            "buddhi_docs/c803c897-c9d7-463d-93ef-56f525f3ee9c/RaghuNEW/raghu.xlsx",
-          ],
+          files: filesToInsertInTable,
         })
         .eq("id", createAgent[0].id);
 
