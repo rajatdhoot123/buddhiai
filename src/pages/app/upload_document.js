@@ -130,6 +130,7 @@ const SecondStep = ({ state, dispatch }) => {
           formData.append(file.name, file);
         }
       });
+      console.log("Called")
       const { data: fileData } = await readExcel(formData);
       const columns = fileData.filter(Boolean).reduce((acc, current) => {
         return [...acc, ...Object.keys(current.data[0])];

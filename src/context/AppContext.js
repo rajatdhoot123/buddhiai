@@ -6,7 +6,7 @@ import {
   useState,
 } from "react";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import { getAvailableAgents } from "../axios";
+import { getAvailableAgents, getConfig } from "../axios";
 
 const AppContext = createContext();
 
@@ -65,21 +65,14 @@ const AppProvider = ({ children = null }) => {
   };
 
   useEffect(() => {
-    const getChatAgents = async (userId) => {
-      const { data, error } = await supabaseClient
-        .from("chat_agents")
-        .select()
-        .eq("created_by", userId);
-      return { data, error };
-    };
     if (userId) {
       (async () => {
         setDocsLoading(true);
         try {
-          const [{ data: availableAgent }, { data: chat_agents }] =
-            await Promise.all([getAvailableAgents(), getChatAgents(userId)]);
+          const [{ data: availableAgent }, { data: config }] =
+            await Promise.all([getAvailableAgents(), getConfig()]);
 
-          dispatch({ type: SET_CHAT_AGENTS, payload: chat_agents });
+          dispatch({ type: SET_CHAT_AGENTS, payload: config.chat_agents });
           dispatch({
             type: SET_ALL_DOS,
             payload: availableAgent.data,
