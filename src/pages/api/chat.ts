@@ -4,7 +4,9 @@ import { makeChain } from "../../../utils/makechain";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { HNSWLib } from "langchain/vectorstores/hnswlib";
 import { join } from "path";
+import { v5 as uuidv5 } from "uuid";
 import redis from "../../lib/redis";
+import { createClient } from "@supabase/supabase-js";
 
 export default async function handler(
   req: NextApiRequest,
@@ -74,6 +76,20 @@ export default async function handler(
     });
 
     res.status(200).json(response);
+
+    const supaAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_ADMIN
+    );
+
+    await supaAdmin
+      .from("chat_session")
+      .insert({
+        created_by: userId || "admin",
+        messages: [{ question: sanitizedQuestion, answer: response.text }],
+        agent_id: uuidv5(filename, userId),
+      })
+      .select();
   } catch (error: any) {
     console.log("error", error);
     res.status(500).json({ error: error.message || "Something went wrong" });
