@@ -19,6 +19,7 @@ import { HiUpload } from "react-icons/hi";
 import { toast } from "react-hot-toast";
 import { readExcel, trainBulk } from "../../axios";
 import Loader from "../../components/Loader";
+import { useRouter } from "next/router";
 
 const SET_STEP = "SET_STEP";
 const SET_AGENT_NAME = "SET_AGENT_NAME";
@@ -252,6 +253,7 @@ const FirstStep = ({ state, dispatch }) => {
 };
 
 function TrainAgent() {
+  const router = useRouter();
   const { files = [], addNewUploadedFile } = useApp();
   const user = useUser();
   const supabaseClient = useSupabaseClient();
@@ -331,6 +333,7 @@ function TrainAgent() {
         .select();
       if (isTraind.status === "fulfilled") {
         toast.success(`${agent} Trained Successfully`);
+        router.push("/app/agent");
       } else {
         toast.error(`${agent} training failed please try again`);
       }
