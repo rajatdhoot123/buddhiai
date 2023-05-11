@@ -9,7 +9,6 @@ import { useRouter } from "next/router";
 
 const ChatApp = ({ activeFile, buddhiAppId, styles, initial_message = "" }) => {
   const [state, setState] = useState([]);
-
   const [history, setHistory] = useState([]);
   const divRef = useRef(null);
   const router = useRouter();
@@ -61,17 +60,15 @@ const ChatApp = ({ activeFile, buddhiAppId, styles, initial_message = "" }) => {
       const { data } = await askQuestion({
         question: payload.text,
         history: history,
-        filename: activeFile?.name,
+        filename: activeFile?.agent_name,
         buddhiAppId,
       });
       setHistory((prev) => [...prev, [payload.text, data.text]]);
-      setState((prev) => prev.filter((_, index) => index !== prev.length - 1));
       setState((prev) => [
         ...prev,
         { id: uuidv4(), type: "answer", text: data.text },
       ]);
     } catch (err) {
-      setState((prev) => prev.filter((_, index) => index !== prev.length - 1));
       setState((prev) => [
         ...prev,
         {
@@ -81,6 +78,7 @@ const ChatApp = ({ activeFile, buddhiAppId, styles, initial_message = "" }) => {
         },
       ]);
     } finally {
+      setState((prev) => prev.filter((_, index) => index !== prev.length - 2));
     }
   };
 

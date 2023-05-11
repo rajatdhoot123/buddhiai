@@ -9,7 +9,8 @@ import { useEffect, useState } from "react";
 import Loader from "../components/Loader";
 import useMediaQuery from "../hooks/useMediaQuery";
 const LEFT_ICONS = [
-  { label: "AI Agent", link: "/app" },
+  { label: "Your Agent", link: "/app" },
+  { label: "Agents", link: "/app/agent" },
   { label: "Upload and Train", link: "/app/upload_document" },
 ];
 
@@ -88,7 +89,7 @@ const App = ({ children }) => {
                   <div className="flex items-center px-5">
                     <HiOutlineDocumentDuplicate />
                     <div className="ml-2 truncate">
-                      {activeFile?.name ?? "Select Doc"}
+                      {activeFile?.agent_name ?? "Select Doc"}
                     </div>
                   </div>
                 </ThreeDotMenu>

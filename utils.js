@@ -19,7 +19,7 @@ export async function getAllFilesInFolder(folderPath) {
     );
     const filesData = stats.map((stat, i) => ({
       path: filePaths[i],
-      name: files[i],
+      agent_name: files[i],
       isFile: stat.isFile(),
       isDirectory: stat.isDirectory(),
       size: stat.size,

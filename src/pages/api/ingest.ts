@@ -6,9 +6,12 @@ import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { HNSWLib } from "langchain/vectorstores/hnswlib";
 import { fileConsumer, formidablePromise } from "@/lib/formidable";
 import { getTextContentFromPDF } from "@/lib/pdf";
+import { excelToText } from "@/lib/excel";
 import { chunk } from "@/lib/utils";
 import { join } from "path";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import redis from "@/lib/redis";
+import { EXCEL_FORMAT } from "@/constant";
 
 const formidableConfig = {
   keepExtensions: true,
@@ -44,6 +47,14 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
     fileWriteStreamHandler: (file) => fileConsumer(file, endBuffers),
   });
 
+  if (!fields.prompt) {
+    return res.status(500).json({ message: "Prompt required" });
+  }
+
+  if (!fields.agent_name) {
+    return res.status(500).json({ message: "Agent name required" });
+  }
+
   const docs = await Promise.all(
     Object.values(files).map(async (fileObj: formidable.file) => {
       let fileText = "";
@@ -57,6 +68,9 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
           break;
         case "application/octet-stream":
           fileText = fileData.toString();
+          break;
+        case EXCEL_FORMAT:
+          fileText = await excelToText(fileData);
           break;
         default:
           throw new Error("Unsupported file type.");
@@ -89,6 +103,7 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
       })
     );
 
+    await redis.set(fields.agent_name, fields.prompt);
     const directory = join(
       process.cwd(),
       "HNSWLib",

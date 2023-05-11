@@ -40,12 +40,12 @@ const App = () => {
               {files.map((file) => (
                 <button
                   onClick={() => {
-                    handleActiveFile(file.name);
+                    handleActiveFile(file.agent_name);
                   }}
-                  key={file.name}
+                  key={file.agent_name}
                   className="text-white border-white border-opacity-50 border rounded-md w-1/2 py-3"
                 >
-                  {file.name}
+                  {file.agent_name}
                 </button>
               ))}
             </div>

@@ -6,22 +6,26 @@ import {
   useState,
 } from "react";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import { getAvailableAgents } from "../axios";
+import { getAvailableAgents, getConfig } from "../axios";
 
 const AppContext = createContext();
 
 const SET_ALL_DOS = "set_all_docs";
 const SET_FILE_ACTIVE = "set_file_active";
+const SET_CHAT_AGENTS = "set_chat_agents";
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case SET_CHAT_AGENTS:
+      return { ...state, chat_agents: action.payload };
     case SET_ALL_DOS:
       return { ...state, files: action.payload || [] };
     case SET_FILE_ACTIVE:
       return {
         ...state,
         activeFile:
-          state.files.find((file) => file.name === action.payload) || null,
+          state.files.find((file) => file.agent_name === action.payload) ||
+          null,
       };
     default:
       return state;
@@ -32,7 +36,9 @@ const AppProvider = ({ children = null }) => {
   const [state, dispatch] = useReducer(reducer, {
     files: [],
     activeFile: null,
+    chatAgents: [],
   });
+
   const [docsLoading, setDocsLoading] = useState(false);
   const supabaseClient = useSupabaseClient();
   const user = useUser();
@@ -63,12 +69,16 @@ const AppProvider = ({ children = null }) => {
       (async () => {
         setDocsLoading(true);
         try {
-          const { data: availableAgent } = await getAvailableAgents();
+          const [{ data: availableAgent }, { data: config }] =
+            await Promise.all([getAvailableAgents(), getConfig()]);
+
+          dispatch({ type: SET_CHAT_AGENTS, payload: config.chat_agents });
           dispatch({
             type: SET_ALL_DOS,
             payload: availableAgent.data,
           });
         } catch (err) {
+          console.log({ err });
         } finally {
           setDocsLoading(false);
         }
