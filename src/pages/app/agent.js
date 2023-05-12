@@ -17,7 +17,7 @@ const UploadedFiles = ({ file, userId, info }) => {
     >
       <div className="w-full">
         <div className="truncate font-bold text-indigo-300 text-lg">{file.agent_name}</div>
-        {info.usage && (
+        {info?.usage && (
           <div className="space-x-2">
             <span className="text-sm">Total Messages</span>
             <span>{info.usage}</span>
