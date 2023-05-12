@@ -9,15 +9,23 @@ import {
 } from "../../../components/ui/dialog";
 import { useApp } from "../../context/AppContext";
 
-const UploadedFiles = ({ file, userId }) => {
+const UploadedFiles = ({ file, userId, info }) => {
   return (
     <li
-      className="text-white border border-white border-opacity-60 rounded-md p-2"
+      className="text-white border border-white border-opacity-60 rounded-md p-5 flex items-center"
       key={file.agent_name}
     >
-      <div className="truncate font-bold text-center">{file.agent_name}</div>
+      <div className="w-full">
+        <div className="truncate font-bold text-indigo-300 text-lg">{file.agent_name}</div>
+        {info.usage && (
+          <div className="space-x-2">
+            <span className="text-sm">Total Messages</span>
+            <span>{info.usage}</span>
+          </div>
+        )}
+      </div>
       <Dialog>
-        <DialogTrigger className="bg-indigo-400 text-white text-sm font-bold px-2 rounded-md flex items-center w-full p-1 mt-2 text-center justify-center">
+        <DialogTrigger className="bg-indigo-400 text-white text-sm font-bold px-2 rounded-md flex items-center w-36 p-1 text-center justify-center">
           Embed
         </DialogTrigger>
         <DialogContent>
@@ -45,16 +53,23 @@ const UploadedFiles = ({ file, userId }) => {
 
 const Agents = () => {
   const user = useUser();
-  const { files = [] } = useApp();
+  const { files = [], chat_agents } = useApp();
 
   return (
     <div className="p-5">
       <div className="text-3xl text-center font-semibold text-white my-5">
         Available Agents
       </div>
-      <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+      <ul className="grid gap-5">
         {files.map((file) => (
-          <UploadedFiles userId={user?.id} key={file.agent_name} file={file} />
+          <UploadedFiles
+            info={chat_agents.find(
+              ({ agent_name }) => agent_name === file.agent_name
+            )}
+            userId={user?.id}
+            key={file.agent_name}
+            file={file}
+          />
         ))}
       </ul>
     </div>
