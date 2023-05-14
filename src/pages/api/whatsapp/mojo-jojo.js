@@ -139,7 +139,6 @@ export default async function handler(req, res) {
     }
     try {
       const payload = { ...handleMessage(message), to: message.from };
-      console.log(JSON.stringify(payload), "Payload");
       const { data } = await axios.post(
         `https://graph.facebook.com/v16.0/${process.env.WHATSAPP_ID}/messages`,
         payload,
@@ -159,6 +158,8 @@ export default async function handler(req, res) {
       } else {
         return res.status(403).send("ok");
       }
+    } else {
+        return res.status(403).send("ok");   
     }
   }
 }
