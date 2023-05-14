@@ -5,7 +5,7 @@ import {
   useReducer,
   useState,
 } from "react";
-import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { useUser } from "@supabase/auth-helpers-react";
 import { getAvailableAgents, getConfig } from "../axios";
 
 const AppContext = createContext();
@@ -40,7 +40,6 @@ const AppProvider = ({ children = null }) => {
   });
 
   const [docsLoading, setDocsLoading] = useState(false);
-  const supabaseClient = useSupabaseClient();
   const user = useUser();
   const userId = user?.id;
 
