@@ -11,50 +11,35 @@ const config = {
 
 const responseByMessageId = (messageId) => {
   switch (messageId) {
-    case "services":
+    case "courses":
       return getList({
-        header: "Services",
-        body: "List of Services",
-        footer: "www.kwiktwik.com",
+        header: "Welcome to RCOEM",
+        body: "Menu option to choose course such as btech or MBA",
+        footer: "http://www.rknec.edu",
         action: {
-          button: "Services",
+          button: "courses",
           sections: [
             {
               rows: [
                 {
-                  id: "instagram_marketing",
-                  title: "Instagram Marketing",
-                  description: "Instagram Marketing",
+                  id: "engineering",
+                  title: "Engineering",
                 },
                 {
-                  id: "whatsapp_marketing",
-                  title: "Whatsapp Marketing",
-                  description: "Whatsapp Marketing",
+                  id: "mba",
+                  title: "MBA",
                 },
                 {
-                  id: "graphic_design",
-                  title: "Graphic Design",
-                  description: "Graphic Design",
+                  id: "arts",
+                  title: "Arts",
                 },
                 {
-                  id: "video_editing",
-                  title: "Video Editing",
-                  description: "Video Editing",
+                  id: "datascience",
+                  title: "Data Science",
                 },
                 {
-                  id: "advertisements",
-                  title: "Advertisements",
-                  description: "Advertisements",
-                },
-                {
-                  id: "website",
-                  title: "Website",
-                  description: "Website",
-                },
-                {
-                  id: "others",
-                  title: "Others",
-                  description: "Others",
+                  id: "contact_us",
+                  title: "Contact Us",
                 },
               ],
             },
@@ -84,13 +69,13 @@ const responseByMessageId = (messageId) => {
     case "help":
     case "start":
       return getButtons({
-        body: "How can we assist you today ?",
-        header: "Welcome to kwiktwik.com",
-        footer: "https://www.instagram.com/kwiktwik.co",
+        body: "Menu option to choose course such as btech or MBA",
+        header: "Welcome to RCOEM",
+        footer: "http://www.rknec.edu",
         buttons: [
           {
-            id: "services",
-            title: "Services",
+            id: "courses",
+            title: "Courses",
           },
           {
             id: "contact_us",
@@ -159,7 +144,7 @@ export default async function handler(req, res) {
         return res.status(403).send("ok");
       }
     } else {
-        return res.status(403).send("ok");   
+      return res.status(403).send("ok");
     }
   }
 }
