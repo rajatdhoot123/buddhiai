@@ -38,7 +38,7 @@ const responseByMessageId = (messageId) => {
                   title: "Data Science",
                 },
                 {
-                  id: "contact_us",
+                  id: "ramdev_contact_us",
                   title: "Contact Us",
                 },
               ],
@@ -46,6 +46,31 @@ const responseByMessageId = (messageId) => {
           ],
         },
       });
+    case "engineering":
+    case "mba":
+    case "arts":
+    case "datascience":
+      return {
+        messaging_product: "whatsapp",
+        recipient_type: "individual",
+        to: "PHONE_NUMBER",
+        type: "text",
+        text: {
+          preview_url: true,
+          body: `Here are the more details about ${messageId.toUpperCase()} \n Visit us at http://www.rknec.edu`,
+        },
+      };
+    case "ramdev_contact_us":
+      return {
+        messaging_product: "whatsapp",
+        recipient_type: "individual",
+        to: "PHONE_NUMBER",
+        type: "text",
+        text: {
+          preview_url: true,
+          body: "Reach us at http://www.rknec.edu",
+        },
+      };
     case "contact_us":
     case "instagram_marketing":
     case "whatsapp_marketing":
