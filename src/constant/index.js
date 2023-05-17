@@ -3,6 +3,7 @@ export const NAV_LIST = [
   { label: "Privacy", link: "/privacy-policy" },
   { label: "Terms", link: "/terms-condition" },
   { label: "About", link: "/about-us" },
+  { label: "Cancellation", link: "/cancellation" },
 ];
 
 export const WHATSAPP_SUPPORT_NUMBER = "7606060439";
