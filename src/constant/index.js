@@ -5,7 +5,7 @@ export const NAV_LIST = [
   { label: "About", link: "/about-us" },
 ];
 
-export const WHATSAPP_SUPPORT_NUMBER = "9966685842";
+export const WHATSAPP_SUPPORT_NUMBER = "7606060439";
 
 export const ADDRESS =
   "RCOEM, Katol Rd, Lonand, Gittikhadan, Nagpur, Maharashtra 440013";
