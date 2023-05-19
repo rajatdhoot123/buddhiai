@@ -1,6 +1,7 @@
 import { FaRegFileExcel, FaRegFilePdf } from "react-icons/fa";
 import { HiOutlineDocumentText } from "react-icons/hi";
 import { CSV, EXCEL_FORMAT, TEXT_FILE } from "../constant";
+import { AiOutlineFile } from "react-icons/ai";
 
 const FilesPreview = ({ files, onFileRemove }) => {
   const handleRemoveFile = (index) => {
@@ -48,7 +49,14 @@ const FilesPreview = ({ files, onFileRemove }) => {
                         </>
                       );
                     default:
-                      return null;
+                      return (
+                        <>
+                          <AiOutlineFile className="w-12 h-12 inline-block" />
+                          <div className="text-xs my-1 truncate w-12">
+                            {file.name}
+                          </div>
+                        </>
+                      );
                   }
                 })()}
               </a>
