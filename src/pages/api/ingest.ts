@@ -12,6 +12,7 @@ import { join } from "path";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import redis from "@/lib/redis";
 import { EXCEL_FORMAT } from "@/constant";
+import { extractTextFromImage } from "@/lib/imagetotext";
 
 const formidableConfig = {
   keepExtensions: true,
@@ -68,6 +69,10 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
           break;
         case "application/octet-stream":
           fileText = fileData.toString();
+          break;
+        case "image/jpeg":
+        case "image/png":
+          fileText = await extractTextFromImage(fileData);
           break;
         case EXCEL_FORMAT:
           fileText = await excelToText(fileData);
