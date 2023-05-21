@@ -38,7 +38,7 @@ export default async function handler(
       return { data, error };
     };
 
-    const { data } = await getChatAgents();
+    const { data, error } = await getChatAgents();
 
     const findUsage = data.map(({ agent_name }) => {
       return supaAdmin

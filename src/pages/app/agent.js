@@ -16,7 +16,9 @@ const UploadedFiles = ({ file, userId, info }) => {
       key={file.agent_name}
     >
       <div className="w-full">
-        <div className="truncate font-bold text-indigo-300 text-lg">{file.agent_name}</div>
+        <div className="truncate font-bold text-indigo-300 text-lg">
+          {file.agent_name}
+        </div>
         {info?.usage && (
           <div className="space-x-2">
             <span className="text-sm">Total Messages</span>
@@ -24,29 +26,56 @@ const UploadedFiles = ({ file, userId, info }) => {
           </div>
         )}
       </div>
-      <Dialog>
-        <DialogTrigger className="bg-indigo-400 text-white text-sm font-bold px-2 rounded-md flex items-center w-36 p-1 text-center justify-center">
-          Embed
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add the following script to your website</DialogTitle>
-            <DialogDescription className="bg-gray-700 text-white px-5 rounded-md py-2">
-              <textarea
-                readOnly
-                rows={7}
-                className="focus:outline-none w-full bg-transparent"
-                value={`<script \nbuddhi_api_id="${
-                  typeof window !== "undefined" &&
-                  window.btoa(
-                    JSON.stringify({ filename: file.agent_name, userId })
-                  )
-                }" \nsrc="https://www.buddhiai.app/buddi_widget/min-buddhi.js" async>\n</script>`}
-              />
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
+      <div className="flex space-x-5">
+        <Dialog>
+          <DialogTrigger className="bg-indigo-400 text-white text-sm font-bold px-2 rounded-md flex items-center w-36 p-1 text-center justify-center">
+            Embed
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                Add the following script to your website
+              </DialogTitle>
+              <DialogDescription className="bg-gray-700 text-white px-5 rounded-md py-2">
+                <textarea
+                  readOnly
+                  rows={7}
+                  className="focus:outline-none w-full bg-transparent"
+                  value={`<script \nbuddhi_api_id="${
+                    typeof window !== "undefined" &&
+                    window.btoa(
+                      JSON.stringify({ filename: file.agent_name, userId })
+                    )
+                  }" \nsrc="https://www.buddhiai.app/buddi_widget/min-buddhi.js" async>\n</script>`}
+                />
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+        <Dialog>
+          <DialogTrigger className="bg-indigo-400 text-white text-sm font-bold px-2 rounded-md flex items-center w-36 p-1 text-center justify-center">
+            Bot Id
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="my-5">Bot Id</DialogTitle>
+              <DialogDescription className="bg-gray-700 text-white px-5 rounded-md py-2">
+                <textarea
+                  readOnly
+                  rows={3}
+                  className="focus:outline-none w-full bg-transparent"
+                  value={
+                    typeof window !== "undefined" &&
+                    window.btoa(
+                      JSON.stringify({ filename: file.agent_name, userId })
+                    )
+                  }
+                />
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+      </div>
     </li>
   );
 };
