@@ -88,20 +88,27 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
   const flatDocs = docs.flat();
 
   try {
-    const chunkSize = 100;
-    const chunks = chunk(flatDocs, chunkSize);
+    // const chunkSize = 100;
+    // const chunks = chunk(flatDocs, chunkSize);
 
-    const result = await Promise.all(
-      chunks.map((chunk) => {
-        return HNSWLib.fromDocuments(
-          chunk,
-          new OpenAIEmbeddings({
-            modelName: "text-embedding-ada-002",
-            openAIApiKey: process.env.OPENAI_API_KEY,
-          })
-        );
+    const result = await HNSWLib.fromDocuments(
+      flatDocs,
+      new OpenAIEmbeddings({
+        modelName: "text-embedding-ada-002",
+        openAIApiKey: process.env.OPENAI_API_KEY,
       })
     );
+    // const result = await Promise.all(
+    //   chunks.map((chunk) => {
+    //     return HNSWLib.fromDocuments(
+    //       chunk,
+    //       new OpenAIEmbeddings({
+    //         modelName: "text-embedding-ada-002",
+    //         openAIApiKey: process.env.OPENAI_API_KEY,
+    //       })
+    //     );
+    //   })
+    // );
 
     await redis.set(fields.agent_name, fields.prompt);
     const directory = join(
@@ -110,11 +117,14 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
       session?.user?.id,
       fields.agent_name
     );
-    await Promise.all(
-      result.map((file) => {
-        file.save(directory);
-      })
-    );
+
+    await result.save(directory);
+
+    // await Promise.all(
+    //   result.map((file) => {
+    //     file.save(directory);
+    //   })
+    // );
     return res.status(200).json({ message: "success" });
   } catch (e) {
     console.log(e);
