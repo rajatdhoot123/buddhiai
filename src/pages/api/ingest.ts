@@ -94,7 +94,7 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
     const result = await HNSWLib.fromDocuments(
       flatDocs,
       new OpenAIEmbeddings({
-        modelName: "text-embedding-ada-002",
+        modelName: "text-davinci-003",
         openAIApiKey: process.env.OPENAI_API_KEY,
       })
     );
