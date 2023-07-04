@@ -85,18 +85,18 @@ const Landing = () => (
       <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
         <div class="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
           <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-white ">
-            Designed for business teams like yours
+            Our Plans
           </h2>
           <p class="mb-5 font-light text-gray-300 sm:text-xl ">
-            Here at Flowbite we focus on markets where technology, innovation,
-            and capital can unlock long-term value and drive economic growth.
+            If these plans doesn&apos;t suit you or you need custom hosting, Contact
+            hello@kwiktwik.app and we can set it up for you.
           </p>
         </div>
         <div class="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0 p-5">
           <div class="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow  xl:p-8  ">
             <h3 class="mb-4 text-2xl font-semibold">Starter</h3>
             <p class="font-light text-gray-500 sm:text-lg ">
-              Best option for personal use & for your next project.
+              Best option for personal & Enterprise use.
             </p>
             <div class="flex justify-center items-baseline my-8">
               <span class="mr-2 text-5xl font-extrabold">$9</span>
