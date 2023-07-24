@@ -111,7 +111,7 @@ const SecondStep = ({ state, dispatch }) => {
       return acc + Number(current.size);
     }, fileSize.current);
 
-    if (fileSize.current / (1024 * 1024) > 5) {
+    if (fileSize.current / (1024 * 1024) > 25) {
       toast(
         "For free version we support file less than 4mb. Contact us for larger files"
       );
