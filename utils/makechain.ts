@@ -6,7 +6,7 @@ import { CONDENSE_PROMPT, PROMPT_SUFFIX, QA_PROMPT } from "@/constant/prompt";
 export const makeChain = (vectorstore: HNSWLib, prompt: string) => {
   const model = new OpenAI({
     temperature: 0, // increase temepreature to get more creative answers
-    modelName: "gpt-3.5-turbo", //change this to gpt-4 if you have access
+    modelName: "gpt-4", //change this to gpt-4 if you have access
   });
 
   console.log(prompt || QA_PROMPT + PROMPT_SUFFIX, "PROMPT");
